@@ -13,6 +13,6 @@
   {:else if $appState === AppState.FlameView}
     <FlameView step={4} />
   {:else}
-    unknown state
+    error: unknown state
   {/if}
 </div>
