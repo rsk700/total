@@ -1,0 +1,27 @@
+.enum entry-type
+    directory: none
+    file: none
+
+.struct entry
+    id: int
+    name: str
+    path: list[str]
+    /-- total size only of directly contained files
+    self-size: int
+    /-- total size including size of contained files and all nested directories
+    size: int
+    self-file-count: int
+    file-count: int
+    self-dir-count: int
+    dir-count: int
+    entry-type: entry-type
+    /-- none for top entry (which has no parent)
+    parent: option[int]
+    entries: list[int]
+
+.struct scan-progress
+    done-count: int
+
+.enum scan-state
+    ready: none
+    scan-progress

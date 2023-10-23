@@ -1,0 +1,4 @@
+#!/bin/bash
+
+leap-gen gen rust src-tauri/src/ipc/messages/ ipc.leap
+leap-gen gen typescript src/ipc/messages/ ipc.leap
