@@ -80,7 +80,7 @@ fn scan_path(path: &Path) -> (PathScanResult, Vec<PathScanResult>, Vec<PathBuf>)
             file_scan.agg_data = Some(AggData {
                 dir_count: 0,
                 file_count: 0,
-                size: file_size,
+                size: 0,
             });
             file_results.push(file_scan);
         } else {
@@ -228,7 +228,11 @@ impl Scanning {
                 }
             }
             let (handle, agg) = stack.pop();
-            self.entries[handle].agg_data = Some(agg);
+            self.entries[handle].agg_data = Some(AggData {
+                dir_count: self.entries[handle].self_dir_count + agg.dir_count,
+                file_count: self.entries[handle].self_file_count + agg.file_count,
+                size: self.entries[handle].self_size + agg.size,
+            });
         }
     }
 
@@ -264,6 +268,8 @@ impl Scanning {
             let next_entry = &self.entries[next_entry_index];
             let next_agg = next_entry.agg_data.as_ref().unwrap();
             let mut tail_size = 0;
+            let mut tail_file_count = 0;
+            let mut tail_dir_count = 0;
             let agg_index = entries.len();
             index_map.map(next_entry_index, agg_index);
             tree.push(vec![]);
@@ -273,8 +279,10 @@ impl Scanning {
                 let next_nested_agg = next_nested.agg_data.as_ref().unwrap();
                 if (next_nested_agg.size as f32) / total < up_to_fraction {
                     tail_size += next_nested_agg.size;
+                    tail_file_count += next_nested_agg.file_count;
+                    tail_dir_count += next_nested_agg.dir_count;
                 } else {
-                    tree[next_entry_index].push(next_nested_index);
+                    tree[agg_index].push(next_nested_index);
                     queue.push(next_nested_index);
                 }
             }
@@ -284,11 +292,13 @@ impl Scanning {
                 next_entry.path.to_string_lossy().as_ref().to_owned(),
                 next_entry.self_size as i64,
                 next_agg.size as i64,
-                next_entry.self_file_count as i64,
                 tail_size as i64,
+                next_entry.self_file_count as i64,
                 next_agg.file_count as i64,
+                tail_file_count as i64,
                 next_entry.self_dir_count as i64,
                 next_agg.dir_count as i64,
+                tail_dir_count as i64,
                 next_entry.is_file,
                 vec![],
                 self.entries[next_entry_index].parent.map(|i| i as i64),
