@@ -1,4 +1,4 @@
-use crate::ipc::ms::structs::{Entry, PathAggregate};
+use crate::ipc::ms::structs::AggregateEntry;
 use std::{
     cmp::Reverse,
     fs,
@@ -22,6 +22,8 @@ pub struct PathScanResult {
     self_size: u64,
     agg_data: Option<AggData>,
     is_file: bool,
+    nested: Vec<usize>,
+    parent: Option<usize>,
 }
 
 impl PathScanResult {
@@ -37,6 +39,8 @@ impl PathScanResult {
             self_size: 0,
             agg_data: None,
             is_file,
+            nested: vec![],
+            parent: None,
         }
     }
 }
@@ -91,13 +95,7 @@ pub struct Scanning {
     root_index: usize,
     // entries, tree and parents have same number of elements, and index is
     // equal to entity handle
-    // todo: wrap `entries` and `tree` into one struct? (both should change at
-    // same time, both should change at same time)
     entries: Vec<PathScanResult>,
-    // entry_index -> indexes of nested entries
-    tree: Vec<Vec<usize>>,
-    // entity_handle -> parent_handle
-    parents: Vec<usize>,
     queue: Vec<(usize, PathBuf)>,
 }
 
@@ -112,18 +110,13 @@ impl Scanning {
         }
         let mut entries = vec![];
         let mut queue = vec![];
-        let mut tree = vec![];
         // performing first scan step in order to prefill queue
         let (root_scan, files_scan, root_queue) = scan_path(&path);
         entries.push(root_scan);
-        tree.push(vec![]);
         for file_scan in files_scan.into_iter() {
             let handle = entries.len();
             entries.push(file_scan);
-            // files has no nested, but need to fill index, indexes of `entries`
-            // match indexes of `tree`
-            tree.push(vec![]);
-            tree[0].push(handle);
+            entries[0].nested.push(handle);
         }
         for next_path in root_queue.into_iter() {
             // 0 - is index of root
@@ -132,10 +125,6 @@ impl Scanning {
         Self {
             root_index: 0,
             entries,
-            tree,
-            // empty because root has no known parent
-            // todo: fix bug - parent indexes is same as in entries/tree
-            parents: vec![],
             queue,
         }
     }
@@ -144,18 +133,16 @@ impl Scanning {
         let Some((parent, path)) = self.queue.pop() else {
             return;
         };
-        let (path_scan, files_scan, path_queue) = scan_path(&path);
+        let (mut path_scan, files_scan, path_queue) = scan_path(&path);
+        path_scan.parent = Some(parent);
         let path_index = self.entries.len();
         self.entries.push(path_scan);
-        self.tree.push(vec![]);
-        self.tree[parent].push(path_index);
-        self.parents.push(parent);
-        for file_scan in files_scan.into_iter() {
+        self.entries[parent].nested.push(path_index);
+        for mut file_scan in files_scan.into_iter() {
+            file_scan.parent = Some(path_index);
             let handle = self.entries.len();
             self.entries.push(file_scan);
-            // taking index for file_scan entry
-            self.tree.push(vec![]);
-            self.tree[path_index].push(handle);
+            self.entries[path_index].nested.push(handle);
         }
         for next_path in path_queue.into_iter() {
             self.queue.push((path_index, next_path));
@@ -223,8 +210,8 @@ impl Scanning {
             });
         }
         while !stack.is_empty() {
-            while stack.nested_index() < self.tree[stack.handle()].len() {
-                let next_nested = self.tree[stack.handle()][stack.nested_index()];
+            while stack.nested_index() < self.entries[stack.handle()].nested.len() {
+                let next_nested = self.entries[stack.handle()].nested[stack.nested_index()];
                 if let Some(agg) = &self.entries[next_nested].agg_data {
                     stack.update_agg(agg);
                     stack.inc_nested_index();
@@ -245,7 +232,7 @@ impl Scanning {
         }
     }
 
-    pub fn get_aggregate_data(&mut self, up_to_fraction: f32) -> PathAggregate {
+    pub fn get_aggregate_data(&mut self, up_to_fraction: f32) -> Vec<AggregateEntry> {
         struct IndexMapper(Vec<Option<usize>>);
         impl IndexMapper {
             fn new(size: usize) -> Self {
@@ -280,7 +267,7 @@ impl Scanning {
             let agg_index = entries.len();
             index_map.map(next_entry_index, agg_index);
             tree.push(vec![]);
-            for next_nested_index in &self.tree[next_entry_index] {
+            for next_nested_index in &self.entries[next_entry_index].nested {
                 let next_nested_index = *next_nested_index;
                 let next_nested = &self.entries[next_nested_index];
                 let next_nested_agg = next_nested.agg_data.as_ref().unwrap();
@@ -291,7 +278,7 @@ impl Scanning {
                     queue.push(next_nested_index);
                 }
             }
-            entries.push(Entry::new(
+            entries.push(AggregateEntry::new(
                 next_entry_index as i64,
                 next_entry.name.clone(),
                 next_entry.path.to_string_lossy().as_ref().to_owned(),
@@ -303,21 +290,25 @@ impl Scanning {
                 next_entry.self_dir_count as i64,
                 next_agg.dir_count as i64,
                 next_entry.is_file,
-                self.parents.get(next_entry_index).map(|i| *i as i64),
+                vec![],
+                self.entries[next_entry_index].parent.map(|i| i as i64),
             ));
         }
         // remap tree to new indexes
-        let tree = tree
+        let tree: Vec<Vec<i64>> = tree
             .into_iter()
             .map(|ii| {
                 let mut ii = ii
                     .into_iter()
-                    .map(|i| index_map.index(i) as i64)
+                    .map(|i| index_map.index(i))
                     .collect::<Vec<_>>();
-                ii.sort_by_key(|i| Reverse(entries[*i as usize].size));
-                ii
+                ii.sort_by_key(|i| Reverse(entries[*i].size));
+                ii.into_iter().map(|i| i as i64).collect()
             })
             .collect();
-        PathAggregate::new(entries, tree)
+        for (i, e) in entries.iter_mut().enumerate() {
+            e.nested = tree[i].clone();
+        }
+        entries
     }
 }

@@ -127,11 +127,11 @@ where
         Box::new(FromLdm::<T>::to_value(self))
     }
 }
-impl FromLdm<types::structs::Entry> for ldm::StructValue
+impl FromLdm<types::structs::AggregateEntry> for ldm::StructValue
 where
 {
-    fn to_value(&self) -> types::structs::Entry {
-        types::structs::Entry {
+    fn to_value(&self) -> types::structs::AggregateEntry {
+        types::structs::AggregateEntry {
             id: FromLdm::<i64>::to_value(self.value.get("id").expect("unexpected value type")),
             name: FromLdm::<String>::to_value(self.value.get("name").expect("unexpected value type")),
             path: FromLdm::<String>::to_value(self.value.get("path").expect("unexpected value type")),
@@ -143,17 +143,8 @@ where
             self_dir_count: FromLdm::<i64>::to_value(self.value.get("self-dir-count").expect("unexpected value type")),
             dir_count: FromLdm::<i64>::to_value(self.value.get("dir-count").expect("unexpected value type")),
             is_file: FromLdm::<bool>::to_value(self.value.get("is-file").expect("unexpected value type")),
+            nested: FromLdm::<Vec<i64>>::to_value(self.value.get("nested").expect("unexpected value type")),
             parent: FromLdm::<Option<i64>>::to_value(self.value.get("parent").expect("unexpected value type")),
-        }
-    }
-}
-impl FromLdm<types::structs::PathAggregate> for ldm::StructValue
-where
-{
-    fn to_value(&self) -> types::structs::PathAggregate {
-        types::structs::PathAggregate {
-            entries: FromLdm::<Vec<types::structs::Entry>>::to_value(self.value.get("entries").expect("unexpected value type")),
-            tree: FromLdm::<Vec<Vec<i64>>>::to_value(self.value.get("tree").expect("unexpected value type")),
         }
     }
 }
@@ -184,21 +175,10 @@ where
         }
     }
 }
-impl FromLdm<types::structs::Entry> for ldm::Value
+impl FromLdm<types::structs::AggregateEntry> for ldm::Value
 where
 {
-    fn to_value(&self) -> types::structs::Entry {
-        if let ldm::Value::Struct(s) = self {
-            s.to_value()
-        } else {
-            panic!("unexpected value type");
-        }
-    }
-}
-impl FromLdm<types::structs::PathAggregate> for ldm::Value
-where
-{
-    fn to_value(&self) -> types::structs::PathAggregate {
+    fn to_value(&self) -> types::structs::AggregateEntry {
         if let ldm::Value::Struct(s) = self {
             s.to_value()
         } else {

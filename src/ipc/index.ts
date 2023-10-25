@@ -29,6 +29,6 @@ export async function scanStep(timeBudgetMs: number): Promise<ms.enums.ScanState
     return ipcRequest("scan_step", timeBudgetMs, t.int, t.ScanState);
 }
 
-export async function getAggregateData(upToFraction: number): Promise<ms.structs.PathAggregate> {
-    return ipcRequest("get_aggregate_data", upToFraction, t.float, t.PathAggregate);
+export async function getAggregateData(upToFraction: number): Promise<ms.structs.AggregateEntry[]> {
+    return ipcRequest("get_aggregate_data", upToFraction, t.float, [t.list, t.AggregateEntry]);
 }

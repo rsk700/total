@@ -5,9 +5,9 @@ import * as types from '../types';
 
 const structMapFromLdm = new Map<string, (d: ldm.StructValue) => ValueBase>([
     [
-        'entry',
+        'aggregate-entry',
         function(d: ldm.StructValue): ValueBase {
-            return new types.structs.Entry(
+            return new types.structs.AggregateEntry(
                 ldmToValue(d.value.get('id')!),
                 ldmToValue(d.value.get('name')!),
                 ldmToValue(d.value.get('path')!),
@@ -19,16 +19,8 @@ const structMapFromLdm = new Map<string, (d: ldm.StructValue) => ValueBase>([
                 ldmToValue(d.value.get('self-dir-count')!),
                 ldmToValue(d.value.get('dir-count')!),
                 ldmToValue(d.value.get('is-file')!),
+                ldmToValue(d.value.get('nested')!),
                 ldmToValue(d.value.get('parent')!),
-            );
-        }
-    ],
-    [
-        'path-aggregate',
-        function(d: ldm.StructValue): ValueBase {
-            return new types.structs.PathAggregate(
-                ldmToValue(d.value.get('entries')!),
-                ldmToValue(d.value.get('tree')!),
             );
         }
     ],

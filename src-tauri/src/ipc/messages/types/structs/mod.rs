@@ -1,8 +1,6 @@
 
-mod entry;
-pub use self::entry::Entry;
-mod path_aggregate;
-pub use self::path_aggregate::PathAggregate;
+mod aggregate_entry;
+pub use self::aggregate_entry::AggregateEntry;
 mod scan_progress;
 pub use self::scan_progress::ScanProgress;
 mod none;

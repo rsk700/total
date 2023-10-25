@@ -5,9 +5,9 @@ import { StructBase as _StructBase } from '../../StructBase';
 import { LeapError as _LeapError } from '../../LeapError';
 import { ValueBase as _ValueBase } from '../../ValueBase';
 
-export class Entry extends _StructBase {
-    static _type: string = 'entry';
-    static _leapStruct: valuetype.LeapStruct = new valuetype.LeapStruct("entry", [], [new valuetype.Property("id", new valuetype.ValueType("int", [])), new valuetype.Property("name", new valuetype.ValueType("str", [])), new valuetype.Property("path", new valuetype.ValueType("str", [])), new valuetype.Property("self-size", new valuetype.ValueType("int", [])), new valuetype.Property("size", new valuetype.ValueType("int", [])), new valuetype.Property("self-file-count", new valuetype.ValueType("int", [])), new valuetype.Property("tail-size", new valuetype.ValueType("int", [])), new valuetype.Property("file-count", new valuetype.ValueType("int", [])), new valuetype.Property("self-dir-count", new valuetype.ValueType("int", [])), new valuetype.Property("dir-count", new valuetype.ValueType("int", [])), new valuetype.Property("is-file", new valuetype.ValueType("bool", [])), new valuetype.Property("parent", new valuetype.ValueType("option", [new valuetype.ValueType("int", [])]))]);
+export class AggregateEntry extends _StructBase {
+    static _type: string = 'aggregate-entry';
+    static _leapStruct: valuetype.LeapStruct = new valuetype.LeapStruct("aggregate-entry", [], [new valuetype.Property("id", new valuetype.ValueType("int", [])), new valuetype.Property("name", new valuetype.ValueType("str", [])), new valuetype.Property("path", new valuetype.ValueType("str", [])), new valuetype.Property("self-size", new valuetype.ValueType("int", [])), new valuetype.Property("size", new valuetype.ValueType("int", [])), new valuetype.Property("self-file-count", new valuetype.ValueType("int", [])), new valuetype.Property("tail-size", new valuetype.ValueType("int", [])), new valuetype.Property("file-count", new valuetype.ValueType("int", [])), new valuetype.Property("self-dir-count", new valuetype.ValueType("int", [])), new valuetype.Property("dir-count", new valuetype.ValueType("int", [])), new valuetype.Property("is-file", new valuetype.ValueType("bool", [])), new valuetype.Property("nested", new valuetype.ValueType("list", [new valuetype.ValueType("int", [])])), new valuetype.Property("parent", new valuetype.ValueType("option", [new valuetype.ValueType("int", [])]))]);
     id: number;
     name: string;
     path: string;
@@ -19,9 +19,10 @@ export class Entry extends _StructBase {
     selfDirCount: number;
     dirCount: number;
     isFile: boolean;
+    nested: Array<number>;
     parent: number | null;
 
-    constructor(id: number, name: string, path: string, selfSize: number, size: number, selfFileCount: number, tailSize: number, fileCount: number, selfDirCount: number, dirCount: number, isFile: boolean, parent: number | null, ) {
+    constructor(id: number, name: string, path: string, selfSize: number, size: number, selfFileCount: number, tailSize: number, fileCount: number, selfDirCount: number, dirCount: number, isFile: boolean, nested: Array<number>, parent: number | null, ) {
         super();
         this.id = id;
         this.name = name;
@@ -34,12 +35,13 @@ export class Entry extends _StructBase {
         this.selfDirCount = selfDirCount;
         this.dirCount = dirCount;
         this.isFile = isFile;
+        this.nested = nested;
         this.parent = parent;
     }
 
     _verifyAsTypeOrRaise(path: string[], valueType: valuetype.ValueType): void {
-        if (valueType.name == Entry._type) {
-            const structType = Entry._leapStruct.applyArgs(valueType.args);
+        if (valueType.name == AggregateEntry._type) {
+            const structType = AggregateEntry._leapStruct.applyArgs(valueType.args);
             _ValueBase._verifyValueOrRaise(path.concat(['id']), this.id, structType.props[0].propType);
             _ValueBase._verifyValueOrRaise(path.concat(['name']), this.name, structType.props[1].propType);
             _ValueBase._verifyValueOrRaise(path.concat(['path']), this.path, structType.props[2].propType);
@@ -51,15 +53,16 @@ export class Entry extends _StructBase {
             _ValueBase._verifyValueOrRaise(path.concat(['selfDirCount']), this.selfDirCount, structType.props[8].propType);
             _ValueBase._verifyValueOrRaise(path.concat(['dirCount']), this.dirCount, structType.props[9].propType);
             _ValueBase._verifyValueOrRaise(path.concat(['isFile']), this.isFile, structType.props[10].propType);
-            _ValueBase._verifyValueOrRaise(path.concat(['parent']), this.parent, structType.props[11].propType);
+            _ValueBase._verifyValueOrRaise(path.concat(['nested']), this.nested, structType.props[11].propType);
+            _ValueBase._verifyValueOrRaise(path.concat(['parent']), this.parent, structType.props[12].propType);
         } else {
-            throw _ValueBase._pathError(path, `expecting ${Entry._type}`);
+            throw _ValueBase._pathError(path, `expecting ${AggregateEntry._type}`);
         }
     }
 
     _toLdm(valueType: valuetype.ValueType): ldm.Value {
         let value = new Map<string, ldm.Value>();
-        const structType = Entry._leapStruct.applyArgs(valueType.args);
+        const structType = AggregateEntry._leapStruct.applyArgs(valueType.args);
         value.set("id", _ValueBase._valueToLdm(this.id, structType.props[0].propType));
         value.set("name", _ValueBase._valueToLdm(this.name, structType.props[1].propType));
         value.set("path", _ValueBase._valueToLdm(this.path, structType.props[2].propType));
@@ -71,7 +74,8 @@ export class Entry extends _StructBase {
         value.set("self-dir-count", _ValueBase._valueToLdm(this.selfDirCount, structType.props[8].propType));
         value.set("dir-count", _ValueBase._valueToLdm(this.dirCount, structType.props[9].propType));
         value.set("is-file", _ValueBase._valueToLdm(this.isFile, structType.props[10].propType));
-        value.set("parent", _ValueBase._valueToLdm(this.parent, structType.props[11].propType));
+        value.set("nested", _ValueBase._valueToLdm(this.nested, structType.props[11].propType));
+        value.set("parent", _ValueBase._valueToLdm(this.parent, structType.props[12].propType));
         return new ldm.StructValue(value, valueType);
     }
 }
