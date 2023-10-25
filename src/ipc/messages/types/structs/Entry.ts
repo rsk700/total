@@ -7,21 +7,21 @@ import { ValueBase as _ValueBase } from '../../ValueBase';
 
 export class Entry extends _StructBase {
     static _type: string = 'entry';
-    static _leapStruct: valuetype.LeapStruct = new valuetype.LeapStruct("entry", [], [new valuetype.Property("id", new valuetype.ValueType("int", [])), new valuetype.Property("name", new valuetype.ValueType("str", [])), new valuetype.Property("path", new valuetype.ValueType("list", [new valuetype.ValueType("str", [])])), new valuetype.Property("self-size", new valuetype.ValueType("int", [])), new valuetype.Property("size", new valuetype.ValueType("int", [])), new valuetype.Property("self-file-count", new valuetype.ValueType("int", [])), new valuetype.Property("file-count", new valuetype.ValueType("int", [])), new valuetype.Property("self-dir-count", new valuetype.ValueType("int", [])), new valuetype.Property("dir-count", new valuetype.ValueType("int", [])), new valuetype.Property("entry-type", new valuetype.ValueType("entry-type", [])), new valuetype.Property("parent", new valuetype.ValueType("option", [new valuetype.ValueType("int", [])])), new valuetype.Property("entries", new valuetype.ValueType("list", [new valuetype.ValueType("int", [])]))]);
+    static _leapStruct: valuetype.LeapStruct = new valuetype.LeapStruct("entry", [], [new valuetype.Property("id", new valuetype.ValueType("int", [])), new valuetype.Property("name", new valuetype.ValueType("str", [])), new valuetype.Property("path", new valuetype.ValueType("str", [])), new valuetype.Property("self-size", new valuetype.ValueType("int", [])), new valuetype.Property("size", new valuetype.ValueType("int", [])), new valuetype.Property("self-file-count", new valuetype.ValueType("int", [])), new valuetype.Property("tail-size", new valuetype.ValueType("int", [])), new valuetype.Property("file-count", new valuetype.ValueType("int", [])), new valuetype.Property("self-dir-count", new valuetype.ValueType("int", [])), new valuetype.Property("dir-count", new valuetype.ValueType("int", [])), new valuetype.Property("is-file", new valuetype.ValueType("bool", [])), new valuetype.Property("parent", new valuetype.ValueType("option", [new valuetype.ValueType("int", [])]))]);
     id: number;
     name: string;
-    path: Array<string>;
+    path: string;
     selfSize: number;
     size: number;
     selfFileCount: number;
+    tailSize: number;
     fileCount: number;
     selfDirCount: number;
     dirCount: number;
-    entryType: types.enums.EntryType;
+    isFile: boolean;
     parent: number | null;
-    entries: Array<number>;
 
-    constructor(id: number, name: string, path: Array<string>, selfSize: number, size: number, selfFileCount: number, fileCount: number, selfDirCount: number, dirCount: number, entryType: types.enums.EntryType, parent: number | null, entries: Array<number>, ) {
+    constructor(id: number, name: string, path: string, selfSize: number, size: number, selfFileCount: number, tailSize: number, fileCount: number, selfDirCount: number, dirCount: number, isFile: boolean, parent: number | null, ) {
         super();
         this.id = id;
         this.name = name;
@@ -29,12 +29,12 @@ export class Entry extends _StructBase {
         this.selfSize = selfSize;
         this.size = size;
         this.selfFileCount = selfFileCount;
+        this.tailSize = tailSize;
         this.fileCount = fileCount;
         this.selfDirCount = selfDirCount;
         this.dirCount = dirCount;
-        this.entryType = entryType;
+        this.isFile = isFile;
         this.parent = parent;
-        this.entries = entries;
     }
 
     _verifyAsTypeOrRaise(path: string[], valueType: valuetype.ValueType): void {
@@ -46,12 +46,12 @@ export class Entry extends _StructBase {
             _ValueBase._verifyValueOrRaise(path.concat(['selfSize']), this.selfSize, structType.props[3].propType);
             _ValueBase._verifyValueOrRaise(path.concat(['size']), this.size, structType.props[4].propType);
             _ValueBase._verifyValueOrRaise(path.concat(['selfFileCount']), this.selfFileCount, structType.props[5].propType);
-            _ValueBase._verifyValueOrRaise(path.concat(['fileCount']), this.fileCount, structType.props[6].propType);
-            _ValueBase._verifyValueOrRaise(path.concat(['selfDirCount']), this.selfDirCount, structType.props[7].propType);
-            _ValueBase._verifyValueOrRaise(path.concat(['dirCount']), this.dirCount, structType.props[8].propType);
-            _ValueBase._verifyValueOrRaise(path.concat(['entryType']), this.entryType, structType.props[9].propType);
-            _ValueBase._verifyValueOrRaise(path.concat(['parent']), this.parent, structType.props[10].propType);
-            _ValueBase._verifyValueOrRaise(path.concat(['entries']), this.entries, structType.props[11].propType);
+            _ValueBase._verifyValueOrRaise(path.concat(['tailSize']), this.tailSize, structType.props[6].propType);
+            _ValueBase._verifyValueOrRaise(path.concat(['fileCount']), this.fileCount, structType.props[7].propType);
+            _ValueBase._verifyValueOrRaise(path.concat(['selfDirCount']), this.selfDirCount, structType.props[8].propType);
+            _ValueBase._verifyValueOrRaise(path.concat(['dirCount']), this.dirCount, structType.props[9].propType);
+            _ValueBase._verifyValueOrRaise(path.concat(['isFile']), this.isFile, structType.props[10].propType);
+            _ValueBase._verifyValueOrRaise(path.concat(['parent']), this.parent, structType.props[11].propType);
         } else {
             throw _ValueBase._pathError(path, `expecting ${Entry._type}`);
         }
@@ -66,12 +66,12 @@ export class Entry extends _StructBase {
         value.set("self-size", _ValueBase._valueToLdm(this.selfSize, structType.props[3].propType));
         value.set("size", _ValueBase._valueToLdm(this.size, structType.props[4].propType));
         value.set("self-file-count", _ValueBase._valueToLdm(this.selfFileCount, structType.props[5].propType));
-        value.set("file-count", _ValueBase._valueToLdm(this.fileCount, structType.props[6].propType));
-        value.set("self-dir-count", _ValueBase._valueToLdm(this.selfDirCount, structType.props[7].propType));
-        value.set("dir-count", _ValueBase._valueToLdm(this.dirCount, structType.props[8].propType));
-        value.set("entry-type", _ValueBase._valueToLdm(this.entryType, structType.props[9].propType));
-        value.set("parent", _ValueBase._valueToLdm(this.parent, structType.props[10].propType));
-        value.set("entries", _ValueBase._valueToLdm(this.entries, structType.props[11].propType));
+        value.set("tail-size", _ValueBase._valueToLdm(this.tailSize, structType.props[6].propType));
+        value.set("file-count", _ValueBase._valueToLdm(this.fileCount, structType.props[7].propType));
+        value.set("self-dir-count", _ValueBase._valueToLdm(this.selfDirCount, structType.props[8].propType));
+        value.set("dir-count", _ValueBase._valueToLdm(this.dirCount, structType.props[9].propType));
+        value.set("is-file", _ValueBase._valueToLdm(this.isFile, structType.props[10].propType));
+        value.set("parent", _ValueBase._valueToLdm(this.parent, structType.props[11].propType));
         return new ldm.StructValue(value, valueType);
     }
 }

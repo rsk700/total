@@ -69,7 +69,7 @@ pub async fn scan_step(
     {
         let s = Arc::clone(s);
         spawn_blocking(move || {
-            let mut s = s.lock().unwrap();
+            let mut s = s.lock().expect("internal error");
             s.scan_step();
         });
     }
@@ -82,4 +82,19 @@ pub async fn scan_step(
     ipc_out(scan_state)
 }
 
-// todo: get_scan
+#[tauri::command]
+pub async fn get_aggregate_data(
+    scanning: tauri::State<'_, AppScanning>,
+    message: String,
+) -> Result<String, String> {
+    let up_to_fraction: f32 = ipc_in::<f64>(message) as f32;
+    let mut s = scanning.0.lock().await;
+    let Some(s) = s.as_mut() else {
+        return ipc_err("scan not started yet");
+    };
+    let Ok(mut s) = s.lock() else {
+        return ipc_err("internal error");
+    };
+    let agg = s.get_aggregate_data(up_to_fraction);
+    ipc_out(agg)
+}

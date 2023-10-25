@@ -10,20 +10,20 @@ use super::super::super::value_type::ValueType as _ValueType;
 pub struct Entry {
     pub id: i64,
     pub name: String,
-    pub path: Vec<String>,
+    pub path: String,
     pub self_size: i64,
     pub size: i64,
     pub self_file_count: i64,
+    pub tail_size: i64,
     pub file_count: i64,
     pub self_dir_count: i64,
     pub dir_count: i64,
-    pub entry_type: types::enums::EntryType,
+    pub is_file: bool,
     pub parent: Option<i64>,
-    pub entries: Vec<i64>,
 }
 
 impl Entry {
-    pub fn new(id: i64, name: String, path: Vec<String>, self_size: i64, size: i64, self_file_count: i64, file_count: i64, self_dir_count: i64, dir_count: i64, entry_type: types::enums::EntryType, parent: Option<i64>, entries: Vec<i64>, ) -> Self {
+    pub fn new(id: i64, name: String, path: String, self_size: i64, size: i64, self_file_count: i64, tail_size: i64, file_count: i64, self_dir_count: i64, dir_count: i64, is_file: bool, parent: Option<i64>, ) -> Self {
         Self {
             id,
             name,
@@ -31,12 +31,12 @@ impl Entry {
             self_size,
             size,
             self_file_count,
+            tail_size,
             file_count,
             self_dir_count,
             dir_count,
-            entry_type,
+            is_file,
             parent,
-            entries,
         }
     }
 }
@@ -63,12 +63,12 @@ impl _StructBase for Entry {
         value.insert("self-size".to_owned(), self.self_size._to_ldm());
         value.insert("size".to_owned(), self.size._to_ldm());
         value.insert("self-file-count".to_owned(), self.self_file_count._to_ldm());
+        value.insert("tail-size".to_owned(), self.tail_size._to_ldm());
         value.insert("file-count".to_owned(), self.file_count._to_ldm());
         value.insert("self-dir-count".to_owned(), self.self_dir_count._to_ldm());
         value.insert("dir-count".to_owned(), self.dir_count._to_ldm());
-        value.insert("entry-type".to_owned(), self.entry_type._to_ldm());
+        value.insert("is-file".to_owned(), self.is_file._to_ldm());
         value.insert("parent".to_owned(), self.parent._to_ldm());
-        value.insert("entries".to_owned(), self.entries._to_ldm());
         ldm::StructValue{
             value,
             value_type: _ValueType::new(Self::_TYPE.to_owned(), Self::_applied_args()),

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { AppState, appState } from "./app_state";
   import ChoosePath from "./components/ChoosePath.svelte";
-  import FlameView from "./components/FlameView.svelte";
+  import FlameViewStart from "./components/FlameViewStart.svelte";
   import Scanning from "./components/Scanning.svelte";
 </script>
 
@@ -11,7 +11,7 @@
   {:else if $appState === AppState.Scanning}
     <Scanning />
   {:else if $appState === AppState.FlameView}
-    <FlameView step={4} />
+    <FlameViewStart />
   {:else}
     error: unknown state
   {/if}

@@ -134,16 +134,26 @@ where
         types::structs::Entry {
             id: FromLdm::<i64>::to_value(self.value.get("id").expect("unexpected value type")),
             name: FromLdm::<String>::to_value(self.value.get("name").expect("unexpected value type")),
-            path: FromLdm::<Vec<String>>::to_value(self.value.get("path").expect("unexpected value type")),
+            path: FromLdm::<String>::to_value(self.value.get("path").expect("unexpected value type")),
             self_size: FromLdm::<i64>::to_value(self.value.get("self-size").expect("unexpected value type")),
             size: FromLdm::<i64>::to_value(self.value.get("size").expect("unexpected value type")),
             self_file_count: FromLdm::<i64>::to_value(self.value.get("self-file-count").expect("unexpected value type")),
+            tail_size: FromLdm::<i64>::to_value(self.value.get("tail-size").expect("unexpected value type")),
             file_count: FromLdm::<i64>::to_value(self.value.get("file-count").expect("unexpected value type")),
             self_dir_count: FromLdm::<i64>::to_value(self.value.get("self-dir-count").expect("unexpected value type")),
             dir_count: FromLdm::<i64>::to_value(self.value.get("dir-count").expect("unexpected value type")),
-            entry_type: FromLdm::<types::enums::EntryType>::to_value(self.value.get("entry-type").expect("unexpected value type")),
+            is_file: FromLdm::<bool>::to_value(self.value.get("is-file").expect("unexpected value type")),
             parent: FromLdm::<Option<i64>>::to_value(self.value.get("parent").expect("unexpected value type")),
-            entries: FromLdm::<Vec<i64>>::to_value(self.value.get("entries").expect("unexpected value type")),
+        }
+    }
+}
+impl FromLdm<types::structs::PathAggregate> for ldm::StructValue
+where
+{
+    fn to_value(&self) -> types::structs::PathAggregate {
+        types::structs::PathAggregate {
+            entries: FromLdm::<Vec<types::structs::Entry>>::to_value(self.value.get("entries").expect("unexpected value type")),
+            tree: FromLdm::<Vec<Vec<i64>>>::to_value(self.value.get("tree").expect("unexpected value type")),
         }
     }
 }
@@ -185,6 +195,17 @@ where
         }
     }
 }
+impl FromLdm<types::structs::PathAggregate> for ldm::Value
+where
+{
+    fn to_value(&self) -> types::structs::PathAggregate {
+        if let ldm::Value::Struct(s) = self {
+            s.to_value()
+        } else {
+            panic!("unexpected value type");
+        }
+    }
+}
 impl FromLdm<types::structs::ScanProgress> for ldm::Value
 where
 {
@@ -215,22 +236,6 @@ where
         if let ldm::Value::Struct(s) = self {
             s.to_value()
         } else {
-            panic!("unexpected value type");
-        }
-    }
-}
-impl FromLdm<types::enums::EntryType> for ldm::Value
-where
-{
-    fn to_value(&self) -> types::enums::EntryType {
-        if let ldm::Value::Enum(e) = self {
-            match e.variant.as_ref() {
-                "directory" => types::enums::EntryType::Directory(FromLdm::<types::structs::None>::to_value(&e.value)),
-                "file" => types::enums::EntryType::File(FromLdm::<types::structs::None>::to_value(&e.value)),
-                _ => panic!("unexpected value type")
-            }
-        }
-        else {
             panic!("unexpected value type");
         }
     }

@@ -1,23 +1,25 @@
-.enum entry-type
-    directory: none
-    file: none
-
 .struct entry
     id: int
     name: str
-    path: list[str]
+    path: str
     /-- total size only of directly contained files
     self-size: int
     /-- total size including size of contained files and all nested directories
     size: int
     self-file-count: int
+    /-- total size of all small nested entries
+    tail-size: int
     file-count: int
     self-dir-count: int
     dir-count: int
-    entry-type: entry-type
+    is-file: bool
     /-- none for top entry (which has no parent)
     parent: option[int]
-    entries: list[int]
+
+.struct path-aggregate
+    /-- root is always first entry
+    entries: list[entry]
+    tree: list[list[int]]
 
 .struct scan-progress
     done-count: int

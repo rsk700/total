@@ -14,12 +14,21 @@ const structMapFromLdm = new Map<string, (d: ldm.StructValue) => ValueBase>([
                 ldmToValue(d.value.get('self-size')!),
                 ldmToValue(d.value.get('size')!),
                 ldmToValue(d.value.get('self-file-count')!),
+                ldmToValue(d.value.get('tail-size')!),
                 ldmToValue(d.value.get('file-count')!),
                 ldmToValue(d.value.get('self-dir-count')!),
                 ldmToValue(d.value.get('dir-count')!),
-                ldmToValue(d.value.get('entry-type')!),
+                ldmToValue(d.value.get('is-file')!),
                 ldmToValue(d.value.get('parent')!),
+            );
+        }
+    ],
+    [
+        'path-aggregate',
+        function(d: ldm.StructValue): ValueBase {
+            return new types.structs.PathAggregate(
                 ldmToValue(d.value.get('entries')!),
+                ldmToValue(d.value.get('tree')!),
             );
         }
     ],
@@ -48,25 +57,6 @@ const structMapFromLdm = new Map<string, (d: ldm.StructValue) => ValueBase>([
     ],
 ]);
 const variantMapFromLdm = new Map<string, Map<string, (d: ldm.EnumValue) => ValueBase>>([
-    [
-        'entry-type',
-        new Map<string, (d: ldm.EnumValue) => ValueBase>([
-            [
-                'directory',
-                function(d: ldm.EnumValue): ValueBase {
-                    return new types.variants.EntryType.Directory(
-                    );
-                }
-            ],
-            [
-                'file',
-                function(d: ldm.EnumValue): ValueBase {
-                    return new types.variants.EntryType.File(
-                    );
-                }
-            ],
-        ])
-    ],
     [
         'scan-state',
         new Map<string, (d: ldm.EnumValue) => ValueBase>([
