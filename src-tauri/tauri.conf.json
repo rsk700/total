@@ -60,7 +60,9 @@
         "height": 600,
         "resizable": true,
         "title": "Total",
-        "width": 800
+        "width": 800,
+        "minWidth": 200,
+        "minHeight": 200
       }
     ]
   }

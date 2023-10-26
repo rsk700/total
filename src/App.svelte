@@ -1,8 +1,24 @@
 <script lang="ts">
+  import { appWindow } from "@tauri-apps/api/window";
   import { AppState, appState } from "./app_state";
   import ChoosePath from "./components/ChoosePath.svelte";
   import FlameViewStart from "./components/FlameViewStart.svelte";
   import Scanning from "./components/Scanning.svelte";
+  import { onDestroy } from "svelte";
+
+  let windowWidth = 800;
+
+  let subOff: (() => void)[] = [];
+  appWindow.innerSize().then((s) => (windowWidth = s.width));
+  appWindow
+    .onResized(({ payload }) => {
+      windowWidth = payload.width;
+    })
+    .then((off) => subOff.push(off));
+
+  onDestroy(() => {
+    subOff.forEach((off) => off());
+  });
 </script>
 
 <div class="absolute inset-0 bg-purple-300">
@@ -11,7 +27,7 @@
   {:else if $appState === AppState.Scanning}
     <Scanning />
   {:else if $appState === AppState.FlameView}
-    <FlameViewStart />
+    <FlameViewStart {windowWidth} />
   {:else}
     error: unknown state
   {/if}

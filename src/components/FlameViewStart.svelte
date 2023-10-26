@@ -1,16 +1,18 @@
 <script lang="ts">
-    import { onMount } from "svelte";
     import type { AggregateEntry } from "../ipc/messages/types/structs";
     import { getAggregateData } from "../ipc";
+    import FlameView from "./FlameView.svelte";
 
+    export let windowWidth: number;
+
+    // todo: quantize upToFraction into steps
     const upToWidthPx = 50;
     let entries: AggregateEntry[] = [];
 
-    onMount(() => {
-        // todo: calculate upToFraction based on window width from upToWidthPx
-        // getAggregateData(0.1).then((e) => (entries = e));
-        getAggregateData(0.1).then((e) => {console.log(e);entries = e;});
-    });
+    // todo: allow only one request at a time + debounce
+    $: getAggregateData(upToWidthPx / windowWidth).then((e) => (entries = e));
 </script>
 
-start
+{#if entries.length !== 0}
+    <FlameView index={0} {entries} />
+{/if}

@@ -277,7 +277,12 @@ impl Scanning {
                 let next_nested_index = *next_nested_index;
                 let next_nested = &self.entries[next_nested_index];
                 let next_nested_agg = next_nested.agg_data.as_ref().unwrap();
-                if (next_nested_agg.size as f32) / total < up_to_fraction {
+                let next_nested_size = if next_nested.is_file {
+                    next_nested.self_size
+                } else {
+                    next_nested_agg.size
+                };
+                if (next_nested_size as f32) / total < up_to_fraction {
                     tail_size += next_nested_agg.size;
                     tail_file_count += next_nested_agg.file_count;
                     tail_dir_count += next_nested_agg.dir_count;
@@ -286,12 +291,17 @@ impl Scanning {
                     queue.push(next_nested_index);
                 }
             }
+            let size = if next_entry.is_file {
+                next_entry.self_size
+            } else {
+                next_agg.size
+            };
             entries.push(AggregateEntry::new(
                 next_entry_index as i64,
                 next_entry.name.clone(),
                 next_entry.path.to_string_lossy().as_ref().to_owned(),
                 next_entry.self_size as i64,
-                next_agg.size as i64,
+                size as i64,
                 tail_size as i64,
                 next_entry.self_file_count as i64,
                 next_agg.file_count as i64,

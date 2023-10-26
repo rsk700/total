@@ -1,35 +1,47 @@
 <script lang="ts">
-  export let step: number;
+  import type { AggregateEntry } from "../ipc/messages/types/structs";
+
+  // todo: export level (for height)
+  // todo: export shift (for colors)
+
+  export let index: number;
+  export let entries: AggregateEntry[];
 
   let viewGrid: HTMLElement | null = null;
-  let nestNext = false;
-  let weights = [3000000, 910000, 900000, 400000, 200000, 60000];
 
   $: if (viewGrid !== null) {
-    nestNext = viewGrid.clientWidth >= 300;
     let template: string[] = [];
-    weights.forEach((w) => {
-      template.push(`${w}fr`);
+    entries[index].nested.forEach((ni) => {
+      template.push(`${entries[ni].size}fr`);
     });
+    // todo: add threshold to tailSize (don't show if very narrow or set min width)
+    if (entries[index].tailSize > 0) {
+      template.push(`${entries[index].tailSize}fr`);
+    }
     viewGrid.style.gridTemplateColumns = template.join(" ");
   }
 </script>
 
 <div bind:this={viewGrid} class="grid-view h-full bg-purple-700">
-  {#each weights as w, i}
+  {#each entries[index].nested as ni}
+    {@const e = entries[ni]}
     <div
       class="bg-green-300 min-w-0 text-ellipsis whitespace-nowrap overflow-hidden"
     >
-      {w}
+      {e.name}
     </div>
     <div class="min-w-0 text-ellipsis whitespace-nowrap overflow-hidden">
-      {#if step > 0 && nestNext}
-        <svelte:self step={step - 1} />
-      {:else}
-        0
+      {#if e.nested.length !== 0}
+        <svelte:self index={ni} {entries} />
       {/if}
     </div>
   {/each}
+  {#if entries[index].tailSize > 0}
+    <div
+      class="bg-green-800 min-w-0 text-ellipsis whitespace-nowrap overflow-hidden"
+    />
+    <div class="min-w-0 text-ellipsis whitespace-nowrap overflow-hidden" />
+  {/if}
 </div>
 
 <style>
