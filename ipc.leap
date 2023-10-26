@@ -14,9 +14,9 @@
     dir-count: int
     tail-dir-count: int
     is-file: bool
-    nested: list[int]
     /-- none for top entry (which has no parent)
     parent: option[int]
+    nested: list[int]
 
 .struct scan-progress
     done-count: int

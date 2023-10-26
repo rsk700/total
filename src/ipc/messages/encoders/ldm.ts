@@ -21,8 +21,8 @@ const structMapFromLdm = new Map<string, (d: ldm.StructValue) => ValueBase>([
                 ldmToValue(d.value.get('dir-count')!),
                 ldmToValue(d.value.get('tail-dir-count')!),
                 ldmToValue(d.value.get('is-file')!),
-                ldmToValue(d.value.get('nested')!),
                 ldmToValue(d.value.get('parent')!),
+                ldmToValue(d.value.get('nested')!),
             );
         }
     ],

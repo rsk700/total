@@ -145,8 +145,8 @@ where
             dir_count: FromLdm::<i64>::to_value(self.value.get("dir-count").expect("unexpected value type")),
             tail_dir_count: FromLdm::<i64>::to_value(self.value.get("tail-dir-count").expect("unexpected value type")),
             is_file: FromLdm::<bool>::to_value(self.value.get("is-file").expect("unexpected value type")),
-            nested: FromLdm::<Vec<i64>>::to_value(self.value.get("nested").expect("unexpected value type")),
             parent: FromLdm::<Option<i64>>::to_value(self.value.get("parent").expect("unexpected value type")),
+            nested: FromLdm::<Vec<i64>>::to_value(self.value.get("nested").expect("unexpected value type")),
         }
     }
 }

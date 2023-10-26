@@ -21,12 +21,12 @@ pub struct AggregateEntry {
     pub dir_count: i64,
     pub tail_dir_count: i64,
     pub is_file: bool,
-    pub nested: Vec<i64>,
     pub parent: Option<i64>,
+    pub nested: Vec<i64>,
 }
 
 impl AggregateEntry {
-    pub fn new(id: i64, name: String, path: String, self_size: i64, size: i64, tail_size: i64, self_file_count: i64, file_count: i64, tail_file_count: i64, self_dir_count: i64, dir_count: i64, tail_dir_count: i64, is_file: bool, nested: Vec<i64>, parent: Option<i64>, ) -> Self {
+    pub fn new(id: i64, name: String, path: String, self_size: i64, size: i64, tail_size: i64, self_file_count: i64, file_count: i64, tail_file_count: i64, self_dir_count: i64, dir_count: i64, tail_dir_count: i64, is_file: bool, parent: Option<i64>, nested: Vec<i64>, ) -> Self {
         Self {
             id,
             name,
@@ -41,8 +41,8 @@ impl AggregateEntry {
             dir_count,
             tail_dir_count,
             is_file,
-            nested,
             parent,
+            nested,
         }
     }
 }
@@ -76,8 +76,8 @@ impl _StructBase for AggregateEntry {
         value.insert("dir-count".to_owned(), self.dir_count._to_ldm());
         value.insert("tail-dir-count".to_owned(), self.tail_dir_count._to_ldm());
         value.insert("is-file".to_owned(), self.is_file._to_ldm());
-        value.insert("nested".to_owned(), self.nested._to_ldm());
         value.insert("parent".to_owned(), self.parent._to_ldm());
+        value.insert("nested".to_owned(), self.nested._to_ldm());
         ldm::StructValue{
             value,
             value_type: _ValueType::new(Self::_TYPE.to_owned(), Self::_applied_args()),

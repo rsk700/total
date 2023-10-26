@@ -26,9 +26,17 @@
   {#each entries[index].nested as ni}
     {@const e = entries[ni]}
     <div
-      class="bg-green-300 min-w-0 text-ellipsis whitespace-nowrap overflow-hidden"
+      class:bg-green-300={!e.isFile}
+      class:bg-green-100={e.isFile}
+      class="min-w-0 text-ellipsis whitespace-nowrap overflow-hidden text-xs leading-3"
     >
       {e.name}
+      <div>ss {e.selfSize}</div>
+      <div>s {e.size}</div>
+      <div>sfc {e.selfFileCount}</div>
+      <div>fc {e.fileCount}</div>
+      <div>sdc {e.selfDirCount}</div>
+      <div>dc {e.dirCount}</div>
     </div>
     <div class="min-w-0 text-ellipsis whitespace-nowrap overflow-hidden">
       {#if e.nested.length !== 0}
@@ -38,8 +46,10 @@
   {/each}
   {#if entries[index].tailSize > 0}
     <div
-      class="bg-green-800 min-w-0 text-ellipsis whitespace-nowrap overflow-hidden"
-    />
+      class="bg-purple-500 min-w-0 text-ellipsis whitespace-nowrap overflow-hidden"
+    >
+      {entries[index].tailSize}
+    </div>
     <div class="min-w-0 text-ellipsis whitespace-nowrap overflow-hidden" />
   {/if}
 </div>

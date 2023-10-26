@@ -5,42 +5,87 @@ use std::{
     path::{Path, PathBuf},
 };
 
+#[derive(Default)]
 pub struct AggData {
-    dir_count: u64,
-    file_count: u64,
-    size: u64,
-}
-
-pub struct PathScanResult {
-    name: String,
-    path: PathBuf,
     // count of directly's directly nested directories
     self_dir_count: u64,
     // count of directly's directly nested files
     self_file_count: u64,
     // total size of directly nested files
     self_size: u64,
+    dir_count: u64,
+    file_count: u64,
+    size: u64,
+}
+
+impl std::ops::Add for AggData {
+    type Output = AggData;
+
+    fn add(self, rhs: Self) -> Self::Output {
+        Self {
+            self_dir_count: self.self_dir_count + rhs.self_dir_count,
+            self_file_count: self.self_file_count + rhs.self_file_count,
+            self_size: self.self_size + rhs.self_size,
+            dir_count: self.dir_count + rhs.dir_count,
+            file_count: self.file_count + rhs.file_count,
+            size: self.size + rhs.size,
+        }
+    }
+}
+
+impl std::ops::AddAssign<&Self> for AggData {
+    fn add_assign(&mut self, rhs: &Self) {
+        self.self_dir_count += rhs.self_dir_count;
+        self.self_file_count += rhs.self_file_count;
+        self.self_size += rhs.self_size;
+        self.dir_count += rhs.dir_count;
+        self.file_count += rhs.file_count;
+        self.size += rhs.size;
+    }
+}
+
+pub struct PathScanResult {
+    name: String,
+    path: PathBuf,
     agg_data: Option<AggData>,
     is_file: bool,
-    nested: Vec<usize>,
     parent: Option<usize>,
+    nested: Vec<usize>,
 }
 
 impl PathScanResult {
-    pub fn new(path: &Path, is_file: bool) -> Self {
+    fn get_safe_name(path: &Path) -> String {
+        path.file_name()
+            .map(|n| n.to_string_lossy().into_owned())
+            .unwrap_or_else(|| "?".to_owned())
+    }
+
+    pub fn new_dir(path: &Path) -> Self {
         Self {
-            name: path
-                .file_name()
-                .map(|n| n.to_string_lossy().into_owned())
-                .unwrap_or_else(|| "?".to_owned()),
+            name: Self::get_safe_name(path),
             path: path.to_owned(),
-            self_dir_count: 0,
-            self_file_count: 0,
-            self_size: 0,
             agg_data: None,
-            is_file,
-            nested: vec![],
+            is_file: false,
             parent: None,
+            nested: vec![],
+        }
+    }
+
+    pub fn new_file(path: &Path, file_size: u64) -> Self {
+        Self {
+            name: Self::get_safe_name(path),
+            path: path.to_owned(),
+            agg_data: Some(AggData {
+                self_dir_count: 0,
+                self_file_count: 1,
+                self_size: file_size,
+                dir_count: 0,
+                file_count: 1,
+                size: file_size,
+            }),
+            is_file: true,
+            parent: None,
+            nested: vec![],
         }
     }
 }
@@ -52,43 +97,27 @@ fn get_file_size(path: &Path) -> u64 {
     meta.len()
 }
 
-fn scan_path(path: &Path) -> (PathScanResult, Vec<PathScanResult>, Vec<PathBuf>) {
-    let mut result = PathScanResult::new(path, false);
-    let mut file_results = vec![];
-    let mut nested = vec![];
-    let Ok(entries) = fs::read_dir(path) else {
-        return (result, file_results, vec![]);
-    };
-    for entry in entries {
-        let Ok(entry) = entry else {
-            continue;
+fn scan_path(path: &Path) -> (PathScanResult, Vec<PathBuf>) {
+    if path.is_file() {
+        (PathScanResult::new_file(path, get_file_size(path)), vec![])
+    } else {
+        let mut nested = vec![];
+        let Ok(entries) = fs::read_dir(path) else {
+            return (PathScanResult::new_dir(path), vec![]);
         };
-        let entry_path = entry.path();
-        if entry_path.is_symlink() {
-            // ignoring symlinks
-            continue;
-        }
-        if entry_path.is_dir() {
-            result.self_dir_count += 1;
-        }
-        if entry_path.is_file() {
-            result.self_file_count += 1;
-            let file_size = get_file_size(&entry_path);
-            result.self_size += file_size;
-            let mut file_scan = PathScanResult::new(&entry_path, true);
-            file_scan.self_size = file_size;
-            file_scan.agg_data = Some(AggData {
-                dir_count: 0,
-                file_count: 0,
-                size: 0,
-            });
-            file_results.push(file_scan);
-        } else {
-            // only keep if directory
+        for entry in entries {
+            let Ok(entry) = entry else {
+                continue;
+            };
+            let entry_path = entry.path();
+            if entry_path.is_symlink() {
+                // ignoring symlinks
+                continue;
+            }
             nested.push(entry_path);
         }
+        (PathScanResult::new_dir(path), nested)
     }
-    (result, file_results, nested)
 }
 
 pub struct Scanning {
@@ -96,6 +125,7 @@ pub struct Scanning {
     // entries, tree and parents have same number of elements, and index is
     // equal to entity handle
     entries: Vec<PathScanResult>,
+    // parent index -> nested path
     queue: Vec<(usize, PathBuf)>,
 }
 
@@ -111,13 +141,8 @@ impl Scanning {
         let mut entries = vec![];
         let mut queue = vec![];
         // performing first scan step in order to prefill queue
-        let (root_scan, files_scan, root_queue) = scan_path(&path);
+        let (root_scan, root_queue) = scan_path(&path);
         entries.push(root_scan);
-        for file_scan in files_scan.into_iter() {
-            let handle = entries.len();
-            entries.push(file_scan);
-            entries[0].nested.push(handle);
-        }
         for next_path in root_queue.into_iter() {
             // 0 - is index of root
             queue.push((0, next_path));
@@ -133,17 +158,11 @@ impl Scanning {
         let Some((parent, path)) = self.queue.pop() else {
             return;
         };
-        let (mut path_scan, files_scan, path_queue) = scan_path(&path);
+        let (mut path_scan, path_queue) = scan_path(&path);
         path_scan.parent = Some(parent);
         let path_index = self.entries.len();
         self.entries.push(path_scan);
         self.entries[parent].nested.push(path_index);
-        for mut file_scan in files_scan.into_iter() {
-            file_scan.parent = Some(path_index);
-            let handle = self.entries.len();
-            self.entries.push(file_scan);
-            self.entries[path_index].nested.push(handle);
-        }
         for next_path in path_queue.into_iter() {
             self.queue.push((path_index, next_path));
         }
@@ -179,9 +198,7 @@ impl Scanning {
 
             fn update_agg(&mut self, agg: &AggData) {
                 let last_agg = self.0.last_mut().unwrap();
-                last_agg.agg.dir_count += agg.dir_count;
-                last_agg.agg.file_count += agg.file_count;
-                last_agg.agg.size += agg.size;
+                last_agg.agg += agg;
             }
 
             fn inc_nested_index(&mut self) {
@@ -202,37 +219,37 @@ impl Scanning {
             stack.push(Cursor {
                 handle: self.root_index,
                 nested_i: 0,
-                agg: AggData {
-                    dir_count: 0,
-                    file_count: 0,
-                    size: 0,
-                },
+                agg: Default::default(),
             });
         }
         while !stack.is_empty() {
             while stack.nested_index() < self.entries[stack.handle()].nested.len() {
-                let next_nested = self.entries[stack.handle()].nested[stack.nested_index()];
-                if let Some(agg) = &self.entries[next_nested].agg_data {
-                    stack.update_agg(agg);
+                let next_nested_i = self.entries[stack.handle()].nested[stack.nested_index()];
+                let next_nested = &self.entries[next_nested_i];
+                if let Some(agg) = &next_nested.agg_data {
+                    if next_nested.is_file {
+                        stack.update_agg(agg);
+                    } else {
+                        stack.update_agg(&AggData {
+                            self_dir_count: 1,
+                            self_file_count: 0,
+                            self_size: 0,
+                            dir_count: agg.dir_count + 1,
+                            file_count: agg.file_count,
+                            size: agg.size,
+                        });
+                    }
                     stack.inc_nested_index();
                 } else {
                     stack.push(Cursor {
-                        handle: next_nested,
+                        handle: next_nested_i,
                         nested_i: 0,
-                        agg: AggData {
-                            dir_count: 0,
-                            file_count: 0,
-                            size: 0,
-                        },
+                        agg: Default::default(),
                     })
                 }
             }
             let (handle, agg) = stack.pop();
-            self.entries[handle].agg_data = Some(AggData {
-                dir_count: self.entries[handle].self_dir_count + agg.dir_count,
-                file_count: self.entries[handle].self_file_count + agg.file_count,
-                size: self.entries[handle].self_size + agg.size,
-            });
+            self.entries[handle].agg_data = Some(agg);
         }
     }
 
@@ -263,7 +280,6 @@ impl Scanning {
             .as_ref()
             .unwrap()
             .size as f32;
-        // todo: sort by size descending,
         while let Some(next_entry_index) = queue.pop() {
             let next_entry = &self.entries[next_entry_index];
             let next_agg = next_entry.agg_data.as_ref().unwrap();
@@ -277,12 +293,7 @@ impl Scanning {
                 let next_nested_index = *next_nested_index;
                 let next_nested = &self.entries[next_nested_index];
                 let next_nested_agg = next_nested.agg_data.as_ref().unwrap();
-                let next_nested_size = if next_nested.is_file {
-                    next_nested.self_size
-                } else {
-                    next_nested_agg.size
-                };
-                if (next_nested_size as f32) / total < up_to_fraction {
+                if (next_nested_agg.size as f32) / total < up_to_fraction {
                     tail_size += next_nested_agg.size;
                     tail_file_count += next_nested_agg.file_count;
                     tail_dir_count += next_nested_agg.dir_count;
@@ -291,27 +302,22 @@ impl Scanning {
                     queue.push(next_nested_index);
                 }
             }
-            let size = if next_entry.is_file {
-                next_entry.self_size
-            } else {
-                next_agg.size
-            };
             entries.push(AggregateEntry::new(
                 next_entry_index as i64,
                 next_entry.name.clone(),
                 next_entry.path.to_string_lossy().as_ref().to_owned(),
-                next_entry.self_size as i64,
-                size as i64,
+                next_agg.self_size as i64,
+                next_agg.size as i64,
                 tail_size as i64,
-                next_entry.self_file_count as i64,
+                next_agg.self_file_count as i64,
                 next_agg.file_count as i64,
                 tail_file_count as i64,
-                next_entry.self_dir_count as i64,
+                next_agg.self_dir_count as i64,
                 next_agg.dir_count as i64,
                 tail_dir_count as i64,
                 next_entry.is_file,
-                vec![],
                 self.entries[next_entry_index].parent.map(|i| i as i64),
+                vec![],
             ));
         }
         // remap tree to new indexes
