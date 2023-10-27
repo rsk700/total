@@ -1,6 +1,6 @@
 <script lang="ts">
     import { dialog } from "@tauri-apps/api";
-    import { AppState, appPath, appState } from "../app_state";
+    import { AppState, appState } from "../app_state";
     import { startScan } from "../ipc";
 
     let showButton = true;
@@ -13,7 +13,6 @@
         if (typeof path === "string") {
             showButton = false;
             await startScan(path);
-            appPath.set(path);
             appState.set(AppState.Scanning);
         }
     }

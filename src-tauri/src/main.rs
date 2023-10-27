@@ -16,7 +16,8 @@ fn main() {
             ipc::start_scan,
             ipc::scan_step,
             ipc::get_aggregate_data,
-            ipc::open_path
+            ipc::open_path,
+            ipc::jump,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

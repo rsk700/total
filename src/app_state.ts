@@ -6,4 +6,3 @@ export enum AppState {
     FlameView,
   }
 export let appState = writable(AppState.ChoosePath);
-export let appPath = writable("");

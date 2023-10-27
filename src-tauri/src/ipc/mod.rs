@@ -105,3 +105,20 @@ pub async fn open_path(message: String) -> Result<String, String> {
     external_path::open_path(path);
     ipc_out(ms::structs::None {})
 }
+
+#[tauri::command]
+pub async fn jump(
+    scanning: tauri::State<'_, AppScanning>,
+    message: String,
+) -> Result<String, String> {
+    let handle = ipc_in::<i64>(message) as usize;
+    let mut s = scanning.0.lock().await;
+    let Some(s) = s.as_mut() else {
+        return ipc_err("scan not started yet");
+    };
+    let Ok(mut s) = s.lock() else {
+        return ipc_err("internal error");
+    };
+    s.jump(handle);
+    ipc_out(ms::structs::None {})
+}

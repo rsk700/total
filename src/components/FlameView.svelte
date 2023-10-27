@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { AggregateEntry } from "../ipc/messages/types/structs";
-  import { openPath } from "../ipc";
+  import { openPath, jump } from "../ipc";
+  import { AppState, appState } from "../app_state";
 
   // todo: export level (for height)
   // todo: export shift (for colors)
@@ -24,7 +25,7 @@
 
   function clickEntry(e: MouseEvent, entry: AggregateEntry) {
     if (e.button === 0) {
-      jump(entry);
+      jumpInside(entry);
     } else if (e.button === 1) {
       openDir(entry);
     }
@@ -32,12 +33,17 @@
 
   function keyUpEntry(e: KeyboardEvent, entry: AggregateEntry) {
     if (e.key === " ") {
-      jump(entry);
+      jumpInside(entry);
     }
   }
 
-  function jump(entry: AggregateEntry) {
-    console.log("jump");
+  async function jumpInside(entry: AggregateEntry) {
+    if (entry.isFile && entry.localParent !== null) {
+      await jump(entries[entry.localParent].globalId);
+    } else {
+      await jump(entry.globalId);
+    }
+    appState.set(AppState.Scanning);
   }
 
   function contextMenu(e: Event, entry: AggregateEntry) {

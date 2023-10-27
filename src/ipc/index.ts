@@ -36,3 +36,7 @@ export async function getAggregateData(upToFraction: number): Promise<ms.structs
 export async function openPath(path: String): Promise<ms.structs.None> {
     return ipcRequest("open_path", path, t.str, t.None);
 }
+
+export async function jump(entryIndex: number): Promise<ms.structs.None> {
+    return ipcRequest("jump", entryIndex, t.int, t.None);
+}

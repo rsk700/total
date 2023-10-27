@@ -359,4 +359,8 @@ impl Scanning {
         }
         entries
     }
+
+    pub fn jump(&mut self, handle: usize) {
+        self.root_index = handle;
+    }
 }
