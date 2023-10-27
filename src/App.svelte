@@ -19,7 +19,16 @@
   onDestroy(() => {
     subOff.forEach((off) => off());
   });
+
+  function ignore(e: Event) {
+    if (import.meta.env.PROD) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  }
 </script>
+
+<svelte:window on:contextmenu={ignore} />
 
 <div class="absolute inset-0 bg-purple-300">
   {#if $appState === AppState.ChoosePath}

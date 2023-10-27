@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { AggregateEntry } from "../ipc/messages/types/structs";
+  import { openPath } from "../ipc";
 
   // todo: export level (for height)
   // todo: export shift (for colors)
@@ -20,12 +21,49 @@
     }
     viewGrid.style.gridTemplateColumns = template.join(" ");
   }
+
+  function clickEntry(e: MouseEvent, entry: AggregateEntry) {
+    if (e.button === 0) {
+      jump(entry);
+    } else if (e.button === 1) {
+      openDir(entry);
+    }
+  }
+
+  function keyUpEntry(e: KeyboardEvent, entry: AggregateEntry) {
+    if (e.key === " ") {
+      jump(entry);
+    }
+  }
+
+  function jump(entry: AggregateEntry) {
+    console.log("jump");
+  }
+
+  function contextMenu(e: Event, entry: AggregateEntry) {
+    e.preventDefault();
+    e.stopPropagation();
+    openDir(entry);
+  }
+
+  function openDir(entry: AggregateEntry) {
+    if (entry.isFile && entry.localParent !== null) {
+      openPath(entries[entry.localParent].path);
+    } else {
+      openPath(entry.path);
+    }
+  }
 </script>
 
 <div bind:this={viewGrid} class="grid-view h-full bg-purple-700">
   {#each entries[index].nested as ni}
     {@const e = entries[ni]}
     <div
+      on:click={(event) => clickEntry(event, e)}
+      on:contextmenu={(event) => contextMenu(event, e)}
+      on:keyup={(event) => keyUpEntry(event, e)}
+      role="button"
+      tabindex="0"
       class:bg-green-300={!e.isFile}
       class:bg-green-100={e.isFile}
       class="min-w-0 text-ellipsis whitespace-nowrap overflow-hidden text-xs leading-3"

@@ -8,7 +8,8 @@ const structMapFromLdm = new Map<string, (d: ldm.StructValue) => ValueBase>([
         'aggregate-entry',
         function(d: ldm.StructValue): ValueBase {
             return new types.structs.AggregateEntry(
-                ldmToValue(d.value.get('id')!),
+                ldmToValue(d.value.get('global-id')!),
+                ldmToValue(d.value.get('local-id')!),
                 ldmToValue(d.value.get('name')!),
                 ldmToValue(d.value.get('path')!),
                 ldmToValue(d.value.get('self-size')!),
@@ -21,7 +22,8 @@ const structMapFromLdm = new Map<string, (d: ldm.StructValue) => ValueBase>([
                 ldmToValue(d.value.get('dir-count')!),
                 ldmToValue(d.value.get('tail-dir-count')!),
                 ldmToValue(d.value.get('is-file')!),
-                ldmToValue(d.value.get('parent')!),
+                ldmToValue(d.value.get('global-parent')!),
+                ldmToValue(d.value.get('local-parent')!),
                 ldmToValue(d.value.get('nested')!),
             );
         }

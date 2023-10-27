@@ -132,7 +132,8 @@ where
 {
     fn to_value(&self) -> types::structs::AggregateEntry {
         types::structs::AggregateEntry {
-            id: FromLdm::<i64>::to_value(self.value.get("id").expect("unexpected value type")),
+            global_id: FromLdm::<i64>::to_value(self.value.get("global-id").expect("unexpected value type")),
+            local_id: FromLdm::<i64>::to_value(self.value.get("local-id").expect("unexpected value type")),
             name: FromLdm::<String>::to_value(self.value.get("name").expect("unexpected value type")),
             path: FromLdm::<String>::to_value(self.value.get("path").expect("unexpected value type")),
             self_size: FromLdm::<i64>::to_value(self.value.get("self-size").expect("unexpected value type")),
@@ -145,7 +146,8 @@ where
             dir_count: FromLdm::<i64>::to_value(self.value.get("dir-count").expect("unexpected value type")),
             tail_dir_count: FromLdm::<i64>::to_value(self.value.get("tail-dir-count").expect("unexpected value type")),
             is_file: FromLdm::<bool>::to_value(self.value.get("is-file").expect("unexpected value type")),
-            parent: FromLdm::<Option<i64>>::to_value(self.value.get("parent").expect("unexpected value type")),
+            global_parent: FromLdm::<Option<i64>>::to_value(self.value.get("global-parent").expect("unexpected value type")),
+            local_parent: FromLdm::<Option<i64>>::to_value(self.value.get("local-parent").expect("unexpected value type")),
             nested: FromLdm::<Vec<i64>>::to_value(self.value.get("nested").expect("unexpected value type")),
         }
     }

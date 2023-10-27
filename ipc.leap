@@ -1,5 +1,6 @@
 .struct aggregate-entry
-    id: int
+    global-id: int
+    local-id: int
     name: str
     path: str
     /-- total size only of directly contained files
@@ -15,7 +16,8 @@
     tail-dir-count: int
     is-file: bool
     /-- none for top entry (which has no parent)
-    parent: option[int]
+    global-parent: option[int]
+    local-parent: option[int]
     nested: list[int]
 
 .struct scan-progress

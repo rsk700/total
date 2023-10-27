@@ -267,6 +267,10 @@ impl Scanning {
             fn index(&self, i: usize) -> usize {
                 self.0[i].unwrap()
             }
+
+            fn try_index(&self, i: usize) -> Option<usize> {
+                self.0.get(i).copied().flatten()
+            }
         }
         self.aggregate();
         let mut index_map = IndexMapper::new(self.entries.len());
@@ -275,6 +279,8 @@ impl Scanning {
         // tree will be storing original indexes, which will be remapped to new
         // indexes of entries
         let mut tree = vec![];
+        let mut local_ids = vec![];
+        let mut local_parents = vec![];
         let total = self.entries[self.root_index]
             .agg_data
             .as_ref()
@@ -289,6 +295,8 @@ impl Scanning {
             let agg_index = entries.len();
             index_map.map(next_entry_index, agg_index);
             tree.push(vec![]);
+            local_ids.push(next_entry_index);
+            local_parents.push(self.entries[next_entry_index].parent);
             for next_nested_index in &self.entries[next_entry_index].nested {
                 let next_nested_index = *next_nested_index;
                 let next_nested = &self.entries[next_nested_index];
@@ -302,7 +310,9 @@ impl Scanning {
                     queue.push(next_nested_index);
                 }
             }
+            // todo: figure it out .parent local vs global, use local_id/global_id?
             entries.push(AggregateEntry::new(
+                next_entry_index as i64,
                 next_entry_index as i64,
                 next_entry.name.clone(),
                 next_entry.path.to_string_lossy().as_ref().to_owned(),
@@ -317,10 +327,11 @@ impl Scanning {
                 tail_dir_count as i64,
                 next_entry.is_file,
                 self.entries[next_entry_index].parent.map(|i| i as i64),
+                self.entries[next_entry_index].parent.map(|i| i as i64),
                 vec![],
             ));
         }
-        // remap tree to new indexes
+        // remap global ids to local ids
         let tree: Vec<Vec<i64>> = tree
             .into_iter()
             .map(|ii| {
@@ -332,8 +343,19 @@ impl Scanning {
                 ii.into_iter().map(|i| i as i64).collect()
             })
             .collect();
+        let local_ids: Vec<i64> = local_ids
+            .into_iter()
+            .map(|i| index_map.index(i) as i64)
+            .collect();
+        let local_parents: Vec<Option<i64>> = local_parents
+            .into_iter()
+            .map(|ii| ii.and_then(|i| index_map.try_index(i)))
+            .map(|ii| ii.map(|i| i as i64))
+            .collect();
         for (i, e) in entries.iter_mut().enumerate() {
             e.nested = tree[i].clone();
+            e.local_id = local_ids[i];
+            e.local_parent = local_parents[i];
         }
         entries
     }

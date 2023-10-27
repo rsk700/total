@@ -8,7 +8,8 @@ use super::super::super::value_type::ValueType as _ValueType;
 
 #[derive(Clone, Debug)]
 pub struct AggregateEntry {
-    pub id: i64,
+    pub global_id: i64,
+    pub local_id: i64,
     pub name: String,
     pub path: String,
     pub self_size: i64,
@@ -21,14 +22,16 @@ pub struct AggregateEntry {
     pub dir_count: i64,
     pub tail_dir_count: i64,
     pub is_file: bool,
-    pub parent: Option<i64>,
+    pub global_parent: Option<i64>,
+    pub local_parent: Option<i64>,
     pub nested: Vec<i64>,
 }
 
 impl AggregateEntry {
-    pub fn new(id: i64, name: String, path: String, self_size: i64, size: i64, tail_size: i64, self_file_count: i64, file_count: i64, tail_file_count: i64, self_dir_count: i64, dir_count: i64, tail_dir_count: i64, is_file: bool, parent: Option<i64>, nested: Vec<i64>, ) -> Self {
+    pub fn new(global_id: i64, local_id: i64, name: String, path: String, self_size: i64, size: i64, tail_size: i64, self_file_count: i64, file_count: i64, tail_file_count: i64, self_dir_count: i64, dir_count: i64, tail_dir_count: i64, is_file: bool, global_parent: Option<i64>, local_parent: Option<i64>, nested: Vec<i64>, ) -> Self {
         Self {
-            id,
+            global_id,
+            local_id,
             name,
             path,
             self_size,
@@ -41,7 +44,8 @@ impl AggregateEntry {
             dir_count,
             tail_dir_count,
             is_file,
-            parent,
+            global_parent,
+            local_parent,
             nested,
         }
     }
@@ -63,7 +67,8 @@ impl _ValueBase for AggregateEntry {
 impl _StructBase for AggregateEntry {
     fn _to_ldm_struct(&self) -> ldm::StructValue {
         let mut value = _HashMap::new();
-        value.insert("id".to_owned(), self.id._to_ldm());
+        value.insert("global-id".to_owned(), self.global_id._to_ldm());
+        value.insert("local-id".to_owned(), self.local_id._to_ldm());
         value.insert("name".to_owned(), self.name._to_ldm());
         value.insert("path".to_owned(), self.path._to_ldm());
         value.insert("self-size".to_owned(), self.self_size._to_ldm());
@@ -76,7 +81,8 @@ impl _StructBase for AggregateEntry {
         value.insert("dir-count".to_owned(), self.dir_count._to_ldm());
         value.insert("tail-dir-count".to_owned(), self.tail_dir_count._to_ldm());
         value.insert("is-file".to_owned(), self.is_file._to_ldm());
-        value.insert("parent".to_owned(), self.parent._to_ldm());
+        value.insert("global-parent".to_owned(), self.global_parent._to_ldm());
+        value.insert("local-parent".to_owned(), self.local_parent._to_ldm());
         value.insert("nested".to_owned(), self.nested._to_ldm());
         ldm::StructValue{
             value,

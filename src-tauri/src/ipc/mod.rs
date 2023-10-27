@@ -7,7 +7,7 @@ use self::messages::{
     },
     value_base::ValueBase,
 };
-use crate::core::Scanning;
+use crate::{core::Scanning, external_path};
 use messages::leap_data_model as ldm;
 pub use messages::types as ms;
 use std::{
@@ -97,4 +97,11 @@ pub async fn get_aggregate_data(
     };
     let agg = s.get_aggregate_data(up_to_fraction);
     ipc_out(agg)
+}
+
+#[tauri::command]
+pub async fn open_path(message: String) -> Result<String, String> {
+    let path: String = ipc_in(message);
+    external_path::open_path(path);
+    ipc_out(ms::structs::None {})
 }
