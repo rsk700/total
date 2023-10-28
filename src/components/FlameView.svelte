@@ -72,7 +72,9 @@
       role="button"
       tabindex="0"
       class:bg-green-300={!e.isFile}
+      class:hover:bg-green-200={!e.isFile}
       class:bg-green-100={e.isFile}
+      class:hover:bg-green-50={e.isFile}
       class="relative min-w-0 whitespace-nowrap overflow-hidden"
     >
       <div
@@ -109,7 +111,7 @@
       class="relative bg-purple-500 min-w-0 text-ellipsis whitespace-nowrap overflow-hidden"
     >
       <div
-        class="absolute inset-0 flex justify-center items-center text-xl font-bold text-purple-600"
+        class="absolute inset-0 flex justify-center items-center text-xl font-bold hover:bg-purple-400 text-purple-600"
       >
         {hrByteSize(entries[index].tailSize)}
       </div>
