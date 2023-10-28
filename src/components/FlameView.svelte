@@ -87,18 +87,18 @@
       >
         {e.name}
       </div>
-      <div
-        class="absolute inset-x-0 bottom-0 flex justify-center p-1 text-xs text-green-700"
-      >
-        <div class="text-ellipsis whitespace-nowrap overflow-hidden">
-          F{hrCount(e.fileCount)}, D{hrCount(e.dirCount)}
+      {#if !e.isFile}
+        <div
+          class="absolute inset-x-0 bottom-0 flex justify-center p-1 text-xs text-green-700"
+        >
+          <div class="text-ellipsis whitespace-nowrap overflow-hidden">
+            F{hrCount(e.fileCount)}, D{hrCount(e.dirCount)}
+          </div>
         </div>
-      </div>
+      {/if}
     </div>
     <div class="min-w-0 text-ellipsis whitespace-nowrap overflow-hidden">
-      {#if e.nested.length !== 0}
-        <svelte:self index={ni} {entries} />
-      {/if}
+      <svelte:self index={ni} {entries} />
     </div>
   {/each}
   {#if entries[index].tailSize > 0}
