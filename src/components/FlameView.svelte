@@ -73,15 +73,25 @@
       tabindex="0"
       class:bg-green-300={!e.isFile}
       class:bg-green-100={e.isFile}
-      class="min-w-0 text-ellipsis whitespace-nowrap overflow-hidden text-xs leading-3"
+      class="relative min-w-0 whitespace-nowrap overflow-hidden"
     >
-      {e.name}
-      <div>ss {hrByteSize(e.selfSize)}</div>
-      <div>s {hrByteSize(e.size)}</div>
-      <div>sfc {hrCount(e.selfFileCount)}</div>
-      <div>fc {hrCount(e.fileCount)}</div>
-      <div>sdc {hrCount(e.selfDirCount)}</div>
-      <div>dc {hrCount(e.dirCount)}</div>
+      <div
+        class="absolute inset-0 flex justify-center items-center text-green-400 text-xl font-bold"
+      >
+        {hrByteSize(e.size)}
+      </div>
+      <div
+        class="absolute inset-0 text-center p-1 text-sm text-green-900 text-ellipsis whitespace-nowrap overflow-hidden"
+      >
+        {e.name}
+      </div>
+      <div
+        class="absolute inset-x-0 bottom-0 flex justify-center p-1 text-xs text-green-700"
+      >
+        <div class="text-ellipsis whitespace-nowrap overflow-hidden">
+          F{hrCount(e.fileCount)}, D{hrCount(e.dirCount)}
+        </div>
+      </div>
     </div>
     <div class="min-w-0 text-ellipsis whitespace-nowrap overflow-hidden">
       {#if e.nested.length !== 0}
@@ -96,9 +106,13 @@
       on:keyup={(event) => keyUpEntry(event, entries[index])}
       role="button"
       tabindex="0"
-      class="bg-purple-500 min-w-0 text-ellipsis whitespace-nowrap overflow-hidden"
+      class="relative bg-purple-500 min-w-0 text-ellipsis whitespace-nowrap overflow-hidden"
     >
-      {hrByteSize(entries[index].tailSize)}
+      <div
+        class="absolute inset-0 flex justify-center items-center text-xl font-bold text-purple-600"
+      >
+        {hrByteSize(entries[index].tailSize)}
+      </div>
     </div>
     <div class="min-w-0 text-ellipsis whitespace-nowrap overflow-hidden" />
   {/if}
