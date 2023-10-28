@@ -2,7 +2,7 @@
   import type { AggregateEntry } from "../ipc/messages/types/structs";
   import { openPath, jump } from "../ipc";
   import { AppState, appState } from "../app_state";
-  import { hrByteSize } from "../text";
+  import { hrByteSize, hrCount } from "../text";
 
   // todo: export level (for height)
   // todo: export shift (for colors)
@@ -78,10 +78,10 @@
       {e.name}
       <div>ss {hrByteSize(e.selfSize)}</div>
       <div>s {hrByteSize(e.size)}</div>
-      <div>sfc {e.selfFileCount}</div>
-      <div>fc {e.fileCount}</div>
-      <div>sdc {e.selfDirCount}</div>
-      <div>dc {e.dirCount}</div>
+      <div>sfc {hrCount(e.selfFileCount)}</div>
+      <div>fc {hrCount(e.fileCount)}</div>
+      <div>sdc {hrCount(e.selfDirCount)}</div>
+      <div>dc {hrCount(e.dirCount)}</div>
     </div>
     <div class="min-w-0 text-ellipsis whitespace-nowrap overflow-hidden">
       {#if e.nested.length !== 0}
@@ -93,7 +93,7 @@
     <div
       class="bg-purple-500 min-w-0 text-ellipsis whitespace-nowrap overflow-hidden"
     >
-      {entries[index].tailSize}
+      {hrByteSize(entries[index].tailSize)}
     </div>
     <div class="min-w-0 text-ellipsis whitespace-nowrap overflow-hidden" />
   {/if}
