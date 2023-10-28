@@ -34,30 +34,32 @@
     }
 </script>
 
-<div class="h-full flex justify-center items-center">
-    <div
-        class="done-counter-text overflow-hidden text-ellipsis whitespace-nowrap"
-    >
-        {doneCount}
+<div class="relative h-full w-full">
+    <div class="absolute inset-0 flex justify-center items-center">
+        <div
+            class="done-counter-text overflow-hidden text-ellipsis whitespace-nowrap"
+        >
+            {doneCount}
+        </div>
     </div>
-</div>
 
-<div class="absolute inset-0 flex justify-center items-center">
-    <button
-        on:click={cancelScan}
-        class="
-            block
-            border
-            rounded
-            px-2
-            text-sm
-            mt-24
-            border-green-100
-            hover:bg-green-100
-            active:bg-green-300
-            active:text-green-900
-            ">cancel</button
-    >
+    <div class="absolute inset-0 flex justify-center items-center">
+        <button
+            on:click={cancelScan}
+            class="
+                block
+                border
+                rounded
+                px-2
+                text-sm
+                mt-24
+                border-green-100
+                hover:bg-green-100
+                active:bg-green-300
+                active:text-green-900
+                ">cancel</button
+        >
+    </div>
 </div>
 
 <style>
