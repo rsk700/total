@@ -28,6 +28,10 @@
             }
         });
     }
+
+    function cancelScan() {
+        appState.set(AppState.ChoosePath);
+    }
 </script>
 
 <div class="h-full flex justify-center items-center">
@@ -36,6 +40,24 @@
     >
         {doneCount}
     </div>
+</div>
+
+<div class="absolute inset-0 flex justify-center items-center">
+    <button
+        on:click={cancelScan}
+        class="
+            block
+            border
+            rounded
+            px-2
+            text-sm
+            mt-24
+            border-green-100
+            hover:bg-green-100
+            active:bg-green-300
+            active:text-green-900
+            ">cancel</button
+    >
 </div>
 
 <style>
