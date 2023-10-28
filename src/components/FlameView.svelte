@@ -91,6 +91,11 @@
   {/each}
   {#if entries[index].tailSize > 0}
     <div
+      on:click={(event) => clickEntry(event, entries[index])}
+      on:contextmenu={(event) => contextMenu(event, entries[index])}
+      on:keyup={(event) => keyUpEntry(event, entries[index])}
+      role="button"
+      tabindex="0"
       class="bg-purple-500 min-w-0 text-ellipsis whitespace-nowrap overflow-hidden"
     >
       {hrByteSize(entries[index].tailSize)}
