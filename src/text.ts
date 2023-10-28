@@ -6,7 +6,7 @@ export function hrByteSize(sizeBytes: number): string {
         return `${sizeBytes}B`;
     }
     let step = Math.floor(Math.log(sizeBytes) / Math.log(byteStep));
-    let size = Math.pow(byteStep, step);
+    let size = Math.floor(sizeBytes / Math.pow(byteStep, step));
     if (step === 1) {
         return `${size}K`;
     } else if (step === 2) {
@@ -19,3 +19,8 @@ export function hrByteSize(sizeBytes: number): string {
         return `${size}P`;
     }
 }
+
+// human readable count
+// export function hrCount(count: number): string {
+
+// }
