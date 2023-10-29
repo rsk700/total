@@ -92,7 +92,7 @@
           class="absolute inset-x-0 bottom-0 flex justify-center p-1 text-xs text-green-700"
         >
           <div class="text-ellipsis whitespace-nowrap overflow-hidden">
-            F{hrCount(e.fileCount)}, D{hrCount(e.dirCount)}
+            f{hrCount(e.fileCount)}, d{hrCount(e.dirCount)}
           </div>
         </div>
       {/if}
