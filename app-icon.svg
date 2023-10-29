@@ -28,9 +28,9 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="px"
      showgrid="true"
-     inkscape:zoom="45.254834"
-     inkscape:cx="6.7948542"
-     inkscape:cy="8.5405241"
+     inkscape:zoom="22.627417"
+     inkscape:cx="0.066291261"
+     inkscape:cy="11.91033"
      inkscape:window-width="1920"
      inkscape:window-height="1031"
      inkscape:window-x="0"
@@ -94,7 +94,7 @@
        style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke-width:1.75748;stroke-linecap:round;stroke-linejoin:bevel;stroke-dasharray:1.75748, 1.75748"
        id="rect2"
        width="12"
-       height="3"
+       height="2"
        x="2"
        y="4"
        ry="1" />
@@ -104,15 +104,15 @@
        width="6"
        height="2"
        x="2"
-       y="8"
-       ry="1" />
+       y="7"
+       ry="0.5" />
     <rect
        style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke-width:1.75748;stroke-linecap:round;stroke-linejoin:bevel;stroke-dasharray:1.75748, 1.75748"
        id="rect8"
        width="3"
-       height="4"
-       x="10"
-       y="8"
+       height="5"
+       x="9"
+       y="7"
        ry="1" />
   </g>
 </svg>
