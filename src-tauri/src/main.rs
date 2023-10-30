@@ -19,6 +19,7 @@ fn main() {
             ipc::open_path,
             ipc::jump,
             ipc::level_up,
+            ipc::rescan,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

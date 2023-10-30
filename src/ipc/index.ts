@@ -37,6 +37,10 @@ export async function openPath(path: String): Promise<ms.structs.None> {
     return ipcRequest("open_path", path, t.str, t.None);
 }
 
+export async function rescan(): Promise<ms.structs.None> {
+    return ipcRequest("rescan", new ms.structs.None(), t.None, t.None);
+}
+
 export async function jump(entryIndex: number): Promise<ms.structs.None> {
     return ipcRequest("jump", entryIndex, t.int, t.None);
 }

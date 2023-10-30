@@ -29,6 +29,11 @@
             ipc.openPath(root.path);
         }
     }
+
+    async function rescan() {
+        await ipc.rescan();
+        appState.set(AppState.Scanning);
+    }
 </script>
 
 <div class="h-10 flex flex-row flex-nowrap items-center">
@@ -47,7 +52,10 @@
             </div>
         </div>
     {/if}
-    <HeaderAction><ion-icon name="refresh" /></HeaderAction>
+    <HeaderAction
+        ><button on:click={rescan}><ion-icon name="refresh" /></button
+        ></HeaderAction
+    >
     <HeaderAction
         ><button on:click={choosePath}><ion-icon name="folder-open" /></button
         ></HeaderAction

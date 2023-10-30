@@ -359,6 +359,10 @@ impl Scanning {
         entries
     }
 
+    pub fn rescan(&mut self) {
+        *self = Self::new(&self.entries[self.root_index].path);
+    }
+
     pub fn jump(&mut self, handle: usize) {
         self.root_index = handle;
     }
