@@ -40,3 +40,7 @@ export async function openPath(path: String): Promise<ms.structs.None> {
 export async function jump(entryIndex: number): Promise<ms.structs.None> {
     return ipcRequest("jump", entryIndex, t.int, t.None);
 }
+
+export async function levelUp(): Promise<string | null> {
+    return ipcRequest("level_up", new ms.structs.None(), t.None, [t.Option, t.str]);
+}

@@ -3,7 +3,7 @@
     import type { AggregateEntry } from "../../ipc/messages/types/structs";
     import { hrByteSize } from "../../text";
     import HeaderAction from "./HeaderAction.svelte";
-    import { startScan } from "../../ipc";
+    import * as ipc from "../../ipc";
     import { AppState, appState } from "../../app_state";
 
     export let root: AggregateEntry | null;
@@ -14,15 +14,23 @@
             title: "Choose directory for scanning",
         });
         if (typeof path === "string") {
-            await startScan(path);
+            await ipc.startScan(path);
             appState.set(AppState.Scanning);
         }
+    }
+
+    async function navigateLevelUp() {
+        await ipc.levelUp();
+        appState.set(AppState.Scanning);
     }
 </script>
 
 <div class="h-10 flex flex-row flex-nowrap items-center">
     <HeaderAction><ion-icon name="play-back" /></HeaderAction>
-    <HeaderAction><ion-icon name="arrow-up" /></HeaderAction>
+    <HeaderAction
+        ><button on:click={navigateLevelUp}><ion-icon name="arrow-up" /></button
+        ></HeaderAction
+    >
     {#if root !== null}
         <div class="flex justify-center items-center">
             <div class="mx-2 text-2xl">{hrByteSize(root.size)}</div>
@@ -34,7 +42,9 @@
         </div>
     {/if}
     <HeaderAction><ion-icon name="refresh" /></HeaderAction>
-    <HeaderAction><button on:click={choosePath}><ion-icon name="folder-open" /></button></HeaderAction
+    <HeaderAction
+        ><button on:click={choosePath}><ion-icon name="folder-open" /></button
+        ></HeaderAction
     >
     <HeaderAction><ion-icon name="information" /></HeaderAction>
 </div>

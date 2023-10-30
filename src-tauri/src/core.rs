@@ -310,7 +310,6 @@ impl Scanning {
                     queue.push(next_nested_index);
                 }
             }
-            // todo: figure it out .parent local vs global, use local_id/global_id?
             entries.push(AggregateEntry::new(
                 next_entry_index as i64,
                 next_entry_index as i64,
@@ -362,5 +361,18 @@ impl Scanning {
 
     pub fn jump(&mut self, handle: usize) {
         self.root_index = handle;
+    }
+
+    pub fn level_up(&mut self) -> Option<PathBuf> {
+        if let Some(parent) = self.entries.get(self.root_index).and_then(|e| e.parent) {
+            // already scanned have parent's index
+            self.root_index = parent;
+            Some(self.entries[self.root_index].path.clone())
+        } else {
+            // root is on top, need rescan
+            let root_path = self.entries.get(self.root_index)?.path.parent()?.to_owned();
+            *self = Self::new(&root_path);
+            Some(root_path)
+        }
     }
 }
