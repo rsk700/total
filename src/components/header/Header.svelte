@@ -23,6 +23,12 @@
         await ipc.levelUp();
         appState.set(AppState.Scanning);
     }
+
+    function openRoot() {
+        if (root !== null) {
+            ipc.openPath(root.path);
+        }
+    }
 </script>
 
 <div class="h-10 flex flex-row flex-nowrap items-center">
@@ -37,7 +43,7 @@
         </div>
         <div class="grow min-w-0 basis flex justify-center items-center">
             <div class="mx-2 text-ellipsis whitespace-nowrap overflow-hidden">
-                {root.path}
+                <button on:click={openRoot}>{root.path}</button>
             </div>
         </div>
     {/if}
