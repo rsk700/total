@@ -63,9 +63,11 @@
         <div class="mx-2 text-2xl">{hrByteSize(root?.size ?? 0)}</div>
     </div>
     <div class="grow min-w-0 basis flex justify-center items-center">
-        <div class="mx-2 text-ellipsis whitespace-nowrap overflow-hidden">
-            <button on:click={openRoot}>{root?.path ?? "?"}</button>
-        </div>
+        <button
+            on:click={openRoot}
+            class="block mx-2 text-ellipsis whitespace-nowrap overflow-hidden"
+            >{root?.path ?? "?"}</button
+        >
     </div>
     <HeaderAction
         ><button on:click={rescan}><ion-icon name="refresh" /></button
