@@ -59,9 +59,9 @@
         ><button on:click={navigateLevelUp}><ion-icon name="arrow-up" /></button
         ></HeaderAction
     >
-    <div class="flex justify-center items-center">
+    <!-- <div class="flex justify-center items-center">
         <div class="mx-2 text-2xl">{hrByteSize(root?.size ?? 0)}</div>
-    </div>
+    </div> -->
     <div class="grow min-w-0 basis flex justify-center items-center">
         <button
             on:click={openRoot}
