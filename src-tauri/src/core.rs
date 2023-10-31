@@ -367,6 +367,20 @@ impl Scanning {
         self.root_index = handle;
     }
 
+    pub fn navigate(&mut self, handle: usize, path: &str) {
+        let path: PathBuf = path.into();
+        if self
+            .entries
+            .get(handle)
+            .map(|e| e.path == path)
+            .unwrap_or_default()
+        {
+            self.root_index = handle;
+        } else {
+            *self = Self::new(&path);
+        }
+    }
+
     pub fn level_up(&mut self) -> Option<PathBuf> {
         if let Some(parent) = self.entries.get(self.root_index).and_then(|e| e.parent) {
             // already scanned have parent's index

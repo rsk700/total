@@ -5,6 +5,7 @@
     import HeaderAction from "./HeaderAction.svelte";
     import * as ipc from "../../ipc";
     import { AppState, appState } from "../../app_state";
+    import { historyIsEmpty, pop as popHistory } from "../../nav_history";
 
     export let root: AggregateEntry | null;
 
@@ -34,10 +35,26 @@
         await ipc.rescan();
         appState.set(AppState.Scanning);
     }
+
+    async function navBack() {
+        let h = popHistory();
+        if (h !== null) {
+            let [id, path] = h;
+            await ipc.navigate(id, path);
+            appState.set(AppState.Scanning);
+        }
+    }
 </script>
 
 <div class="h-10 flex flex-row flex-nowrap items-center">
-    <HeaderAction><ion-icon name="play-back" /></HeaderAction>
+    <HeaderAction
+        ><button
+            on:click={navBack}
+            disabled={$historyIsEmpty}
+            class="disabled:text-slate-400"
+            ><ion-icon name="play-back" /></button
+        ></HeaderAction
+    >
     <HeaderAction
         ><button on:click={navigateLevelUp}><ion-icon name="arrow-up" /></button
         ></HeaderAction

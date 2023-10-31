@@ -161,6 +161,16 @@ where
         }
     }
 }
+impl FromLdm<types::structs::Navigation> for ldm::StructValue
+where
+{
+    fn to_value(&self) -> types::structs::Navigation {
+        types::structs::Navigation {
+            global_id: FromLdm::<i64>::to_value(self.value.get("global-id").expect("unexpected value type")),
+            path: FromLdm::<String>::to_value(self.value.get("path").expect("unexpected value type")),
+        }
+    }
+}
 impl FromLdm<types::structs::None> for ldm::StructValue
 where
 {
@@ -194,6 +204,17 @@ impl FromLdm<types::structs::ScanProgress> for ldm::Value
 where
 {
     fn to_value(&self) -> types::structs::ScanProgress {
+        if let ldm::Value::Struct(s) = self {
+            s.to_value()
+        } else {
+            panic!("unexpected value type");
+        }
+    }
+}
+impl FromLdm<types::structs::Navigation> for ldm::Value
+where
+{
+    fn to_value(&self) -> types::structs::Navigation {
         if let ldm::Value::Struct(s) = self {
             s.to_value()
         } else {

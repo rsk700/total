@@ -37,6 +37,15 @@ const structMapFromLdm = new Map<string, (d: ldm.StructValue) => ValueBase>([
         }
     ],
     [
+        'navigation',
+        function(d: ldm.StructValue): ValueBase {
+            return new types.structs.Navigation(
+                ldmToValue(d.value.get('global-id')!),
+                ldmToValue(d.value.get('path')!),
+            );
+        }
+    ],
+    [
         'none',
         function(d: ldm.StructValue): ValueBase {
             return new types.structs.None(

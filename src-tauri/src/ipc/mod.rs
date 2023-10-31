@@ -156,3 +156,20 @@ pub async fn rescan(
     s.rescan();
     ipc_out(ms::structs::None {})
 }
+
+#[tauri::command]
+pub async fn navigate(
+    scanning: tauri::State<'_, AppScanning>,
+    message: String,
+) -> Result<String, String> {
+    let nav: ms::structs::Navigation = ipc_in(message);
+    let mut s = scanning.0.lock().await;
+    let Some(s) = s.as_mut() else {
+        return ipc_err("scan not started yet");
+    };
+    let Ok(mut s) = s.lock() else {
+        return ipc_err("internal error");
+    };
+    s.navigate(nav.global_id as usize, &nav.path);
+    ipc_out(ms::structs::None {})
+}

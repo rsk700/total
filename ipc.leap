@@ -26,3 +26,7 @@
 .enum scan-state
     ready: none
     scan-progress
+
+.struct navigation
+    global-id: int
+    path: str

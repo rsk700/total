@@ -48,3 +48,7 @@ export async function jump(entryIndex: number): Promise<ms.structs.None> {
 export async function levelUp(): Promise<string | null> {
     return ipcRequest("level_up", new ms.structs.None(), t.None, [t.Option, t.str]);
 }
+
+export async function navigate(globalId: number, path: string): Promise<ms.structs.None> {
+    return ipcRequest("navigate", new ms.structs.Navigation(globalId, path), t.Navigation, t.None);
+}

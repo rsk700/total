@@ -7,6 +7,7 @@ export const t = {
     AggregateEntry: 'aggregate-entry',
     ScanProgress: 'scan-progress',
     ScanState: 'scan-state',
+    Navigation: 'navigation',
     None: 'none',
     Some: 'some',
     Option: 'option',
