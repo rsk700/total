@@ -46,6 +46,14 @@ const structMapFromLdm = new Map<string, (d: ldm.StructValue) => ValueBase>([
         }
     ],
     [
+        'about-app',
+        function(d: ldm.StructValue): ValueBase {
+            return new types.structs.AboutApp(
+                ldmToValue(d.value.get('version')!),
+            );
+        }
+    ],
+    [
         'none',
         function(d: ldm.StructValue): ValueBase {
             return new types.structs.None(

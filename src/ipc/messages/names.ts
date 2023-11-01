@@ -8,6 +8,7 @@ export const t = {
     ScanProgress: 'scan-progress',
     ScanState: 'scan-state',
     Navigation: 'navigation',
+    AboutApp: 'about-app',
     None: 'none',
     Some: 'some',
     Option: 'option',

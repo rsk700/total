@@ -171,6 +171,15 @@ where
         }
     }
 }
+impl FromLdm<types::structs::AboutApp> for ldm::StructValue
+where
+{
+    fn to_value(&self) -> types::structs::AboutApp {
+        types::structs::AboutApp {
+            version: FromLdm::<String>::to_value(self.value.get("version").expect("unexpected value type")),
+        }
+    }
+}
 impl FromLdm<types::structs::None> for ldm::StructValue
 where
 {
@@ -215,6 +224,17 @@ impl FromLdm<types::structs::Navigation> for ldm::Value
 where
 {
     fn to_value(&self) -> types::structs::Navigation {
+        if let ldm::Value::Struct(s) = self {
+            s.to_value()
+        } else {
+            panic!("unexpected value type");
+        }
+    }
+}
+impl FromLdm<types::structs::AboutApp> for ldm::Value
+where
+{
+    fn to_value(&self) -> types::structs::AboutApp {
         if let ldm::Value::Struct(s) = self {
             s.to_value()
         } else {

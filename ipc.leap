@@ -30,3 +30,6 @@
 .struct navigation
     global-id: int
     path: str
+
+.struct about-app
+    version: str

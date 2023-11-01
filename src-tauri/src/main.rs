@@ -13,6 +13,7 @@ fn main() {
     tauri::Builder::default()
         .manage(scanning_state)
         .invoke_handler(tauri::generate_handler![
+            ipc::info,
             ipc::start_scan,
             ipc::scan_step,
             ipc::get_aggregate_data,

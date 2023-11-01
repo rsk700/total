@@ -6,8 +6,11 @@
     import * as ipc from "../../ipc";
     import { AppState, appState } from "../../app_state";
     import { historyIsEmpty, pop as popHistory } from "../../nav_history";
+    import About from "../About.svelte";
 
     export let root: AggregateEntry | null;
+
+    let showAbout = false;
 
     async function choosePath() {
         let path = await dialog.open({
@@ -46,6 +49,7 @@
     }
 </script>
 
+<About bind:show={showAbout} />
 <div class="h-10 flex flex-row flex-nowrap items-center">
     <HeaderAction
         ><button
@@ -77,5 +81,9 @@
         ><button on:click={choosePath}><ion-icon name="folder-open" /></button
         ></HeaderAction
     >
-    <HeaderAction><ion-icon name="information" /></HeaderAction>
+    <HeaderAction
+        ><button on:click={() => (showAbout = true)}
+            ><ion-icon name="information" /></button
+        ></HeaderAction
+    >
 </div>

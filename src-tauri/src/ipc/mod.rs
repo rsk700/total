@@ -43,6 +43,13 @@ where
 pub struct AppScanning(pub MutexAsync<Option<Arc<Mutex<Scanning>>>>);
 
 #[tauri::command]
+pub async fn info(message: String) -> Result<String, String> {
+    let _: ms::structs::None = ipc_in(message);
+    let about = ms::structs::AboutApp::new(env!("CARGO_PKG_VERSION").to_owned());
+    ipc_out(about)
+}
+
+#[tauri::command]
 pub async fn start_scan(
     scanning: tauri::State<'_, AppScanning>,
     message: String,

@@ -21,6 +21,10 @@ async function ipcRequest<OUT, IN>(pipe: string, message: OUT, outType: any, inT
     }));
 }
 
+export async function info(): Promise<ms.structs.AboutApp> {
+    return ipcRequest("info", new ms.structs.None(), t.None, t.AboutApp);
+}
+
 export async function startScan(path: string): Promise<ms.structs.None> {
     return ipcRequest("start_scan", path, t.str, t.None);
 }
