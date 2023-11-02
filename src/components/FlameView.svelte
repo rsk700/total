@@ -3,10 +3,9 @@
   import { openPath, jump } from "../ipc";
   import { AppState, appState } from "../app_state";
   import { hrByteSize, hrCount } from "../text";
-  import { lerp } from "../numbers";
+  import { lerp, lerpc } from "../numbers";
 
-  // todo: export level (for height)
-  // todo: export shift (for colors)
+  // todo: use level (for height)
 
   const colorSteps = 4 * 2;
 
@@ -27,7 +26,6 @@
     entries[index].nested.forEach((ni) => {
       template.push(`${entries[ni].size}fr`);
     });
-    // todo: add threshold to tailSize (don't show if very narrow or set min width)
     if (entries[index].tailSize > 0) {
       template.push(`${entries[index].tailSize}fr`);
     }
@@ -77,7 +75,7 @@
   ) {
     if (params.e.isFile) {
       let bg = "#cef4db";
-      let hover = "rgb(240 253 244)";
+      let hover = "#f0fdf4";
       node.style.backgroundColor = bg;
       node.addEventListener(
         "mouseover",
@@ -88,8 +86,6 @@
         () => (node.style.backgroundColor = bg)
       );
     } else {
-      // todo: use lerp?
-      // todo: lower the levels less changes between same level elements, next level fits into `10` this and next H, move into different direction (negative H)?
       let ix = colorShift;
       if (level === 0) {
         ix += startIndex + params.i;
@@ -108,10 +104,8 @@
         ix -= 2;
       }
       let h = lerp(0, 264, (ix % colorSteps) / colorSteps);
-      // todo: use clamped lerp
-      let s = Math.max(86 - level * 10, 86 - 3 * 10);
-      // todo: use clamped lerp
-      let l = Math.min(60 + level * 3, 60 + 5 * 3);
+      let s = lerpc(86, 56, level / 4);
+      let l = lerpc(60, 75, level / 4);
       let bg = `hsl(${h} ${s}% ${l}%)`;
       let bgHover = `hsl(${h} ${s + 4}% ${l + 10}%)`;
       node.style.backgroundColor = bg;

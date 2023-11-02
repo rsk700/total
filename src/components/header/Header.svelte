@@ -50,7 +50,9 @@
 </script>
 
 <About bind:show={showAbout} />
-<div class="h-10 flex flex-row flex-nowrap items-center">
+<div
+    class="h-10 border-b border-[#929fcc] flex flex-row flex-nowrap items-center bg-[#b3bfee]"
+>
     <HeaderAction
         ><button
             on:click={navBack}
