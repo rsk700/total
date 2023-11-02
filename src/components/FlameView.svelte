@@ -3,12 +3,15 @@
   import { openPath, jump } from "../ipc";
   import { AppState, appState } from "../app_state";
   import { hrByteSize, hrCount } from "../text";
+  import { lerp } from "../numbers";
 
   // todo: export level (for height)
   // todo: export shift (for colors)
 
   export let index: number;
   export let entries: AggregateEntry[];
+  export let level: number;
+  export let colorShift: number;
 
   let viewGrid: HTMLElement | null = null;
 
@@ -60,10 +63,71 @@
       openPath(entry.path);
     }
   }
+
+  function colorBlock(
+    node: HTMLElement,
+    params: { e: AggregateEntry; i: number }
+  ) {
+    if (params.e.isFile) {
+      let bg = "#cef4db";
+      let hover = "rgb(240 253 244)";
+      node.style.backgroundColor = bg;
+      node.addEventListener(
+        "mouseover",
+        () => (node.style.backgroundColor = hover)
+      );
+      node.addEventListener(
+        "mouseleave",
+        () => (node.style.backgroundColor = bg)
+      );
+    } else {
+      // todo: use lerp?
+      // todo: lower the levels less changes between same level elements, next level fits into `10` this and next H, move into different direction (negative H)?
+      // let baseH = 35 + ((((0 + colorShift) % 10) * 33) % 240);
+      // h = 0..263
+      // let h = 35 + ((((params.i + colorShift) % 10) * 33) % 240);
+      // let ix = params.i + colorShift;
+      let ix = colorShift;
+      if (level === 0) {
+        ix += params.i;
+      }
+      // shuffling like this, in order to avoid similar colors touching each other:
+      // 0 1 2 3, 4 5 6 7
+      // 1 3 0 2, 5 7 4 6
+      let ixShuffle = ix % 4;
+      if (ixShuffle === 0) {
+        ix += 2;
+      } else if (ixShuffle === 1) {
+        ix -= 1;
+      } else if (ixShuffle === 2) {
+        ix += 1;
+      } else if (ixShuffle === 3) {
+        ix -= 2;
+      }
+      let hSteps = 4 * 2;
+      let h = lerp(0, 264, (ix % hSteps) / hSteps);
+      // todo: use clamped lerp
+      let s = Math.max(86 - level * 10, 86 - 3 * 10);
+      // todo: use clamped lerp
+      let l = Math.min(60 + level * 3, 60 + 5 * 3);
+      let bg = `hsl(${h} ${s}% ${l}%)`;
+      let bgHover = `hsl(${h} ${s + 4}% ${l + 10}%)`;
+      node.style.backgroundColor = bg;
+      node.addEventListener(
+        "mouseover",
+        () => (node.style.backgroundColor = bgHover)
+      );
+      node.addEventListener(
+        "mouseleave",
+        () => (node.style.backgroundColor = bg)
+      );
+    }
+  }
 </script>
 
-<div bind:this={viewGrid} class="grid-view h-full bg-purple-700">
-  {#each entries[index].nested as ni}
+<!-- todo: try gradient for bg dark -> light (or reverse) -->
+<div bind:this={viewGrid} class="grid-view h-full bg-[#082043]">
+  {#each entries[index].nested as ni, i}
     {@const e = entries[ni]}
     <div
       on:click={(event) => clickEntry(event, e)}
@@ -71,19 +135,16 @@
       on:keyup={(event) => keyUpEntry(event, e)}
       role="button"
       tabindex="0"
-      class:bg-green-300={!e.isFile}
-      class:hover:bg-green-200={!e.isFile}
-      class:bg-green-100={e.isFile}
-      class:hover:bg-green-50={e.isFile}
+      use:colorBlock={{ e, i }}
       class="relative min-w-0 whitespace-nowrap overflow-hidden"
     >
       <div
-        class="absolute inset-0 flex justify-center items-center text-green-400 text-xl font-bold"
+        class="invisible absolute inset-0 flex justify-center items-center text-green-400 text-xl font-bold"
       >
         {hrByteSize(e.size)}
       </div>
       <div
-        class="absolute inset-0 text-center p-1 text-sm text-green-900 text-ellipsis whitespace-nowrap overflow-hidden"
+        class="invisible absolute inset-0 text-center p-1 text-sm text-green-900 text-ellipsis whitespace-nowrap overflow-hidden"
       >
         {e.name}
       </div>
@@ -91,14 +152,21 @@
         <div
           class="absolute inset-x-0 bottom-0 flex justify-center p-1 text-xs text-green-700"
         >
-          <div class="text-ellipsis whitespace-nowrap overflow-hidden">
+          <div
+            class="invisible text-ellipsis whitespace-nowrap overflow-hidden"
+          >
             f{hrCount(e.fileCount)}, d{hrCount(e.dirCount)}
           </div>
         </div>
       {/if}
     </div>
     <div class="min-w-0 text-ellipsis whitespace-nowrap overflow-hidden">
-      <svelte:self index={ni} {entries} />
+      <svelte:self
+        index={ni}
+        {entries}
+        level={level + 1}
+        colorShift={level === 0 ? colorShift + i : colorShift}
+      />
     </div>
   {/each}
   {#if entries[index].tailSize > 0}
@@ -108,10 +176,10 @@
       on:keyup={(event) => keyUpEntry(event, entries[index])}
       role="button"
       tabindex="0"
-      class="relative bg-purple-500 min-w-0 text-ellipsis whitespace-nowrap overflow-hidden"
+      class="relative bg-purple-400 hover:bg-purple-300 min-w-0 text-ellipsis whitespace-nowrap overflow-hidden"
     >
       <div
-        class="absolute inset-0 flex justify-center items-center text-xl font-bold hover:bg-purple-400 text-purple-600"
+        class="invisible absolute inset-0 flex justify-center items-center text-xl font-bold text-purple-600"
       >
         {hrByteSize(entries[index].tailSize)}
       </div>

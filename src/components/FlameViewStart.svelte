@@ -27,5 +27,5 @@
 
 <Header root={entries[0] ?? null} />
 {#if entries.length !== 0}
-    <FlameView index={0} {entries} />
+    <FlameView index={0} {entries} level={0} colorShift={0} />
 {/if}
