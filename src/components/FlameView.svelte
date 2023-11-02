@@ -5,8 +5,6 @@
   import { hrByteSize, hrCount } from "../text";
   import { lerp, lerpc } from "../numbers";
 
-  // todo: use level (for height)
-
   const colorSteps = 4 * 2;
 
   export let index: number;
@@ -122,7 +120,11 @@
 </script>
 
 <!-- todo: try gradient for bg dark -> light (or reverse) -->
-<div bind:this={viewGrid} class="grid-view h-full bg-[#082043]">
+<div
+  bind:this={viewGrid}
+  style:grid-template-rows={`${lerpc(100, 70, level / 5)}px auto`}
+  class="grid-view h-full bg-[#082043]"
+>
   {#each entries[index].nested as ni, i}
     {@const e = entries[ni]}
     <div
@@ -189,8 +191,8 @@
     justify-items: stretch;
     align-items: stretch;
     display: grid;
-    /* todo: height based on nested level */
-    grid-template-rows: 100px auto;
+    /* height is based on nested level, applied using `style` directive */
+    /* grid-template-rows: 100px auto; */
     gap: 1px;
     grid-auto-flow: column;
   }
