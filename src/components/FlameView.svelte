@@ -90,10 +90,6 @@
     } else {
       // todo: use lerp?
       // todo: lower the levels less changes between same level elements, next level fits into `10` this and next H, move into different direction (negative H)?
-      // let baseH = 35 + ((((0 + colorShift) % 10) * 33) % 240);
-      // h = 0..263
-      // let h = 35 + ((((params.i + colorShift) % 10) * 33) % 240);
-      // let ix = params.i + colorShift;
       let ix = colorShift;
       if (level === 0) {
         ix += startIndex + params.i;
