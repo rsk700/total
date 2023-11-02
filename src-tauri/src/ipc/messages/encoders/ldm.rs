@@ -135,6 +135,7 @@ where
             global_id: FromLdm::<i64>::to_value(self.value.get("global-id").expect("unexpected value type")),
             local_id: FromLdm::<i64>::to_value(self.value.get("local-id").expect("unexpected value type")),
             name: FromLdm::<String>::to_value(self.value.get("name").expect("unexpected value type")),
+            name_hash: FromLdm::<i64>::to_value(self.value.get("name-hash").expect("unexpected value type")),
             path: FromLdm::<String>::to_value(self.value.get("path").expect("unexpected value type")),
             self_size: FromLdm::<i64>::to_value(self.value.get("self-size").expect("unexpected value type")),
             size: FromLdm::<i64>::to_value(self.value.get("size").expect("unexpected value type")),

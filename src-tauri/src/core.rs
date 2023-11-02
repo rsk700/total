@@ -1,7 +1,10 @@
+use murmur3::murmur3_32;
+
 use crate::ipc::ms::structs::AggregateEntry;
 use std::{
     cmp::Reverse,
     fs,
+    io::Cursor,
     path::{Path, PathBuf},
 };
 
@@ -118,6 +121,10 @@ fn scan_path(path: &Path) -> (PathScanResult, Vec<PathBuf>) {
         }
         (PathScanResult::new_dir(path), nested)
     }
+}
+
+fn get_string_hash(s: &str) -> i64 {
+    murmur3_32(&mut Cursor::new(s), 0).unwrap() as i64
 }
 
 pub struct Scanning {
@@ -314,6 +321,7 @@ impl Scanning {
                 next_entry_index as i64,
                 next_entry_index as i64,
                 next_entry.name.clone(),
+                get_string_hash(&next_entry.name),
                 next_entry.path.to_string_lossy().as_ref().to_owned(),
                 next_agg.self_size as i64,
                 next_agg.size as i64,

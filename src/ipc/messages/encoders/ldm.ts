@@ -11,6 +11,7 @@ const structMapFromLdm = new Map<string, (d: ldm.StructValue) => ValueBase>([
                 ldmToValue(d.value.get('global-id')!),
                 ldmToValue(d.value.get('local-id')!),
                 ldmToValue(d.value.get('name')!),
+                ldmToValue(d.value.get('name-hash')!),
                 ldmToValue(d.value.get('path')!),
                 ldmToValue(d.value.get('self-size')!),
                 ldmToValue(d.value.get('size')!),

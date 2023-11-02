@@ -11,6 +11,7 @@ pub struct AggregateEntry {
     pub global_id: i64,
     pub local_id: i64,
     pub name: String,
+    pub name_hash: i64,
     pub path: String,
     pub self_size: i64,
     pub size: i64,
@@ -28,11 +29,12 @@ pub struct AggregateEntry {
 }
 
 impl AggregateEntry {
-    pub fn new(global_id: i64, local_id: i64, name: String, path: String, self_size: i64, size: i64, tail_size: i64, self_file_count: i64, file_count: i64, tail_file_count: i64, self_dir_count: i64, dir_count: i64, tail_dir_count: i64, is_file: bool, global_parent: Option<i64>, local_parent: Option<i64>, nested: Vec<i64>, ) -> Self {
+    pub fn new(global_id: i64, local_id: i64, name: String, name_hash: i64, path: String, self_size: i64, size: i64, tail_size: i64, self_file_count: i64, file_count: i64, tail_file_count: i64, self_dir_count: i64, dir_count: i64, tail_dir_count: i64, is_file: bool, global_parent: Option<i64>, local_parent: Option<i64>, nested: Vec<i64>, ) -> Self {
         Self {
             global_id,
             local_id,
             name,
+            name_hash,
             path,
             self_size,
             size,
@@ -70,6 +72,7 @@ impl _StructBase for AggregateEntry {
         value.insert("global-id".to_owned(), self.global_id._to_ldm());
         value.insert("local-id".to_owned(), self.local_id._to_ldm());
         value.insert("name".to_owned(), self.name._to_ldm());
+        value.insert("name-hash".to_owned(), self.name_hash._to_ldm());
         value.insert("path".to_owned(), self.path._to_ldm());
         value.insert("self-size".to_owned(), self.self_size._to_ldm());
         value.insert("size".to_owned(), self.size._to_ldm());

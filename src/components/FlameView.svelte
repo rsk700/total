@@ -8,12 +8,19 @@
   // todo: export level (for height)
   // todo: export shift (for colors)
 
+  const colorSteps = 4 * 2;
+
   export let index: number;
   export let entries: AggregateEntry[];
   export let level: number;
   export let colorShift: number;
 
+  let startIndex = 0;
   let viewGrid: HTMLElement | null = null;
+
+  $: if (entries.length > 0) {
+    startIndex = entries[0].nameHash % colorSteps;
+  }
 
   $: if (viewGrid !== null) {
     let template: string[] = [];
@@ -89,7 +96,7 @@
       // let ix = params.i + colorShift;
       let ix = colorShift;
       if (level === 0) {
-        ix += params.i;
+        ix += startIndex + params.i;
       }
       // shuffling like this, in order to avoid similar colors touching each other:
       // 0 1 2 3, 4 5 6 7
@@ -104,8 +111,7 @@
       } else if (ixShuffle === 3) {
         ix -= 2;
       }
-      let hSteps = 4 * 2;
-      let h = lerp(0, 264, (ix % hSteps) / hSteps);
+      let h = lerp(0, 264, (ix % colorSteps) / colorSteps);
       // todo: use clamped lerp
       let s = Math.max(86 - level * 10, 86 - 3 * 10);
       // todo: use clamped lerp
@@ -165,7 +171,7 @@
         index={ni}
         {entries}
         level={level + 1}
-        colorShift={level === 0 ? colorShift + i : colorShift}
+        colorShift={level === 0 ? startIndex + colorShift + i : colorShift}
       />
     </div>
   {/each}
