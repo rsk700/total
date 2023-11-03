@@ -2,6 +2,7 @@
     import { dialog } from "@tauri-apps/api";
     import { AppState, appState } from "../app_state";
     import { startScan } from "../ipc";
+    import BigButtonLight from "./BigButtonLight.svelte";
 
     let showButton = true;
 
@@ -20,18 +21,6 @@
 
 {#if showButton}
     <div class="h-full flex justify-center items-center">
-        <button
-            on:click={choosePath}
-            class="
-    border-2
-    rounded
-    p-2
-    text-2xl
-    border-green-100
-    hover:bg-green-100
-    active:bg-green-300
-    active:text-green-900
-    ">choose path</button
-        >
+        <BigButtonLight on:click={choosePath}>choose path</BigButtonLight>
     </div>
 {/if}
