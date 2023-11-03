@@ -4,8 +4,10 @@
   import { AppState, appState } from "../app_state";
   import { hrByteSize, hrCount } from "../text";
   import { lerp, lerpc } from "../numbers";
+  import { Hsl } from "../color";
 
   const colorSteps = 4 * 2;
+  const fileBg = new Hsl(141, 63, 88);
 
   export let index: number;
   export let entries: AggregateEntry[];
@@ -67,12 +69,36 @@
     }
   }
 
+  function baseColor(i: number): Hsl {
+    let ix = colorShift;
+    if (level === 0) {
+      ix += startIndex + i;
+    }
+    // shuffling like this, in order to avoid similar colors touching each other:
+    // 0 1 2 3, 4 5 6 7
+    // 1 3 0 2, 5 7 4 6
+    let ixShuffle = ix % 4;
+    if (ixShuffle === 0) {
+      ix += 2;
+    } else if (ixShuffle === 1) {
+      ix -= 1;
+    } else if (ixShuffle === 2) {
+      ix += 1;
+    } else if (ixShuffle === 3) {
+      ix -= 2;
+    }
+    let h = lerp(0, 264, (ix % colorSteps) / colorSteps);
+    let s = lerpc(86, 56, level / 4);
+    let l = lerpc(60, 75, level / 4);
+    return new Hsl(h, s, l);
+  }
+
   function colorBlock(
     node: HTMLElement,
     params: { e: AggregateEntry; i: number }
   ) {
     if (params.e.isFile) {
-      let bg = "#cef4db";
+      let bg = fileBg.toString();
       let hover = "#f0fdf4";
       node.style.backgroundColor = bg;
       node.addEventListener(
@@ -84,36 +110,16 @@
         () => (node.style.backgroundColor = bg)
       );
     } else {
-      let ix = colorShift;
-      if (level === 0) {
-        ix += startIndex + params.i;
-      }
-      // shuffling like this, in order to avoid similar colors touching each other:
-      // 0 1 2 3, 4 5 6 7
-      // 1 3 0 2, 5 7 4 6
-      let ixShuffle = ix % 4;
-      if (ixShuffle === 0) {
-        ix += 2;
-      } else if (ixShuffle === 1) {
-        ix -= 1;
-      } else if (ixShuffle === 2) {
-        ix += 1;
-      } else if (ixShuffle === 3) {
-        ix -= 2;
-      }
-      let h = lerp(0, 264, (ix % colorSteps) / colorSteps);
-      let s = lerpc(86, 56, level / 4);
-      let l = lerpc(60, 75, level / 4);
-      let bg = `hsl(${h} ${s}% ${l}%)`;
-      let bgHover = `hsl(${h} ${s + 4}% ${l + 10}%)`;
-      node.style.backgroundColor = bg;
+      let bg = baseColor(params.i);
+      let bgHover = bg.ds(4).dl(10);
+      node.style.backgroundColor = bg.toString();
       node.addEventListener(
         "mouseover",
-        () => (node.style.backgroundColor = bgHover)
+        () => (node.style.backgroundColor = bgHover.toString())
       );
       node.addEventListener(
         "mouseleave",
-        () => (node.style.backgroundColor = bg)
+        () => (node.style.backgroundColor = bg.toString())
       );
     }
   }
@@ -127,6 +133,7 @@
 >
   {#each entries[index].nested as ni, i}
     {@const e = entries[ni]}
+    {@const bc = baseColor(i)}
     <div
       on:click={(event) => clickEntry(event, e)}
       on:contextmenu={(event) => contextMenu(event, e)}
@@ -137,23 +144,33 @@
       class="relative min-w-0 whitespace-nowrap overflow-hidden"
     >
       <div
-        class="invisible absolute inset-0 flex justify-center items-center text-green-400 text-xl font-bold"
+        style:color={e.isFile
+          ? fileBg.dl(-15).ds(-20).toString()
+          : bc.dl(-10).ds(-20).toString()}
+        class="absolute inset-0 flex justify-center items-center text-xl font-bold"
       >
         {hrByteSize(e.size)}
       </div>
       <div
-        class="invisible absolute inset-0 text-center p-1 text-sm text-green-900 text-ellipsis whitespace-nowrap overflow-hidden"
+        style:color={e.isFile
+          ? fileBg.dl(-50).ds(-20).toString()
+          : bc.dl(-40).ds(-20).toString()}
+        class="absolute inset-0 text-center p-1 text-sm text-ellipsis whitespace-nowrap overflow-hidden"
       >
         {e.name}
       </div>
       {#if !e.isFile}
         <div
-          class="absolute inset-x-0 bottom-0 flex justify-center p-1 text-xs text-green-700"
+          class="absolute inset-x-0 bottom-0 flex justify-center p-1 text-xs"
         >
           <div
-            class="invisible text-ellipsis whitespace-nowrap overflow-hidden"
+            style:color={bc.dl(-25).ds(-10).toString()}
+            class="text-ellipsis whitespace-nowrap overflow-hidden"
           >
-            f{hrCount(e.fileCount)}, d{hrCount(e.dirCount)}
+            <ion-icon name="document-outline" />
+            {hrCount(e.fileCount)}
+            <ion-icon name="folder-outline" />
+            {hrCount(e.dirCount)}
           </div>
         </div>
       {/if}
@@ -177,7 +194,7 @@
       class="relative bg-purple-400 hover:bg-purple-300 min-w-0 text-ellipsis whitespace-nowrap overflow-hidden"
     >
       <div
-        class="invisible absolute inset-0 flex justify-center items-center text-xl font-bold text-purple-600"
+        class="absolute inset-0 flex justify-center items-center text-xl font-bold text-purple-500"
       >
         {hrByteSize(entries[index].tailSize)}
       </div>
