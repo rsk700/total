@@ -30,7 +30,7 @@
 
 <svelte:window on:contextmenu={ignore} />
 
-<div class="absolute inset-0 bg-purple-300">
+<div class="absolute inset-0 bg-[#082043]">
   {#if $appState === AppState.ChoosePath}
     <ChoosePath />
   {:else if $appState === AppState.Scanning}

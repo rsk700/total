@@ -129,7 +129,7 @@
 <div
   bind:this={viewGrid}
   style:grid-template-rows={`${lerpc(100, 70, level / 5)}px auto`}
-  class="grid-view h-full bg-[#082043]"
+  class="grid-view h-full"
 >
   {#each entries[index].nested as ni, i}
     {@const e = entries[ni]}
