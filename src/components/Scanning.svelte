@@ -3,6 +3,7 @@
     import { scanStep } from "../ipc";
     import * as ms from "../ipc/messages/types";
     import { AppState, appState } from "../app_state";
+    import SmallButtonLight from "./SmallButtonLight.svelte";
 
     const scanStepTimeBudgetMs = 500;
     let stopScan = false;
@@ -44,21 +45,9 @@
     </div>
 
     <div class="absolute inset-0 flex justify-center items-center">
-        <button
-            on:click={cancelScan}
-            class="
-                block
-                border
-                rounded
-                px-2
-                text-sm
-                mt-24
-                border-green-100
-                hover:bg-green-100
-                active:bg-green-300
-                active:text-green-900
-                ">cancel</button
-        >
+        <div class="mt-24">
+            <SmallButtonLight on:click={cancelScan}>cancel</SmallButtonLight>
+        </div>
     </div>
 </div>
 
