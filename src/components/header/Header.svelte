@@ -7,6 +7,7 @@
     import { AppState, appState } from "../../app_state";
     import { historyIsEmpty, pop as popHistory } from "../../nav_history";
     import About from "../About.svelte";
+    import HeaderButton from "./HeaderButton.svelte";
 
     export let root: AggregateEntry | null;
 
@@ -53,18 +54,16 @@
 <div
     class="h-10 border-b border-[#929fcc] flex flex-row flex-nowrap items-center bg-[#b3bfee]"
 >
+    <HeaderAction>
+        <HeaderButton on:click={navBack} disabled={$historyIsEmpty}>
+            <ion-icon name="play-back" class="block h-full" />
+        </HeaderButton>
+    </HeaderAction>
     <HeaderAction
-        ><button
-            on:click={navBack}
-            disabled={$historyIsEmpty}
-            class="disabled:text-slate-400"
-            ><ion-icon name="play-back" /></button
-        ></HeaderAction
-    >
-    <HeaderAction
-        ><button on:click={navigateLevelUp}><ion-icon name="arrow-up" /></button
-        ></HeaderAction
-    >
+        ><HeaderButton on:click={navigateLevelUp}
+            ><ion-icon name="arrow-up" class="block h-full" /></HeaderButton
+        >
+    </HeaderAction>
     <!-- <div class="flex justify-center items-center">
         <div class="mx-2 text-2xl">{hrByteSize(root?.size ?? 0)}</div>
     </div> -->
@@ -75,17 +74,19 @@
             >{root?.path ?? "?"}</button
         >
     </div>
-    <HeaderAction
-        ><button on:click={rescan}><ion-icon name="refresh" /></button
-        ></HeaderAction
-    >
-    <HeaderAction
-        ><button on:click={choosePath}><ion-icon name="folder-open" /></button
-        ></HeaderAction
-    >
-    <HeaderAction
-        ><button on:click={() => (showAbout = true)}
-            ><ion-icon name="information" /></button
-        ></HeaderAction
-    >
+    <HeaderAction>
+        <HeaderButton on:click={rescan}>
+            <ion-icon name="refresh" class="block h-full" />
+        </HeaderButton>
+    </HeaderAction>
+    <HeaderAction>
+        <HeaderButton on:click={choosePath}>
+            <ion-icon name="folder-open" class="block h-full" />
+        </HeaderButton>
+    </HeaderAction>
+    <HeaderAction>
+        <HeaderButton on:click={() => (showAbout = true)}>
+            <ion-icon name="information" class="block h-full" />
+        </HeaderButton>
+    </HeaderAction>
 </div>
