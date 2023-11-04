@@ -7,8 +7,8 @@ export default {
     extend: {}
     ,
     fontFamily: {
-      'sans': ['"Roboto"', ...defaultTheme.fontFamily.sans],
-      ...defaultTheme.fontFamily
+      ...defaultTheme.fontFamily,
+      'sans': ['Roboto', ...defaultTheme.fontFamily.sans],
     }
   },
   plugins: [],
