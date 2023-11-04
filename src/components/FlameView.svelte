@@ -198,6 +198,16 @@
       >
         {hrByteSize(entries[index].tailSize)}
       </div>
+      <div class="absolute inset-x-0 bottom-0 flex justify-center p-1 text-xs">
+        <div
+          class="text-ellipsis whitespace-nowrap overflow-hidden text-purple-600"
+        >
+          <ion-icon name="document-outline" />
+          {hrCount(entries[index].tailFileCount)}
+          <ion-icon name="folder-outline" />
+          {hrCount(entries[index].tailDirCount)}
+        </div>
+      </div>
     </div>
     <div class="min-w-0 text-ellipsis whitespace-nowrap overflow-hidden" />
   {/if}
