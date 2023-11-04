@@ -70,7 +70,7 @@
     <div class="grow min-w-0 basis flex justify-center items-center">
         <button
             on:click={openRoot}
-            class="block mx-2 text-ellipsis whitespace-nowrap overflow-hidden"
+            class="block mx-2 text-ellipsis whitespace-nowrap overflow-hidden text-[#10112d] hover:text-[#035600]"
             >{root?.path ?? "?"}</button
         >
     </div>
