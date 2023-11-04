@@ -37,7 +37,7 @@
 <div class="relative h-full w-full">
     <div class="absolute inset-0 flex justify-center items-center">
         <div
-            class="done-counter-text overflow-hidden text-ellipsis whitespace-nowrap"
+            class="done-counter-text overflow-hidden text-ellipsis whitespace-nowrap text-slate-300"
         >
             {doneCount}
         </div>
