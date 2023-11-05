@@ -7,22 +7,22 @@ use super::super::super::leap_data_model as ldm;
 use super::super::super::value_type::ValueType as _ValueType;
 
 #[derive(Clone, Debug)]
-pub struct Navigation {
-    pub global_id: Option<i64>,
+pub struct PathComponent {
     pub path: String,
+    pub name: String,
 }
 
-impl Navigation {
-    pub fn new(global_id: Option<i64>, path: String, ) -> Self {
+impl PathComponent {
+    pub fn new(path: String, name: String, ) -> Self {
         Self {
-            global_id,
             path,
+            name,
         }
     }
 }
 
-impl _ValueBase for Navigation {
-    const _TYPE: &'static str = "navigation";
+impl _ValueBase for PathComponent {
+    const _TYPE: &'static str = "path-component";
 
     fn _applied_args() -> Vec<_ValueType> {
         vec![
@@ -34,11 +34,11 @@ impl _ValueBase for Navigation {
     }
 }
 
-impl _StructBase for Navigation {
+impl _StructBase for PathComponent {
     fn _to_ldm_struct(&self) -> ldm::StructValue {
         let mut value = _HashMap::new();
-        value.insert("global-id".to_owned(), self.global_id._to_ldm());
         value.insert("path".to_owned(), self.path._to_ldm());
+        value.insert("name".to_owned(), self.name._to_ldm());
         ldm::StructValue{
             value,
             value_type: _ValueType::new(Self::_TYPE.to_owned(), Self::_applied_args()),

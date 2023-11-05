@@ -7,11 +7,11 @@ import { ValueBase as _ValueBase } from '../../ValueBase';
 
 export class Navigation extends _StructBase {
     static _type: string = 'navigation';
-    static _leapStruct: valuetype.LeapStruct = new valuetype.LeapStruct("navigation", [], [new valuetype.Property("global-id", new valuetype.ValueType("int", [])), new valuetype.Property("path", new valuetype.ValueType("str", []))]);
-    globalId: number;
+    static _leapStruct: valuetype.LeapStruct = new valuetype.LeapStruct("navigation", [], [new valuetype.Property("global-id", new valuetype.ValueType("option", [new valuetype.ValueType("int", [])])), new valuetype.Property("path", new valuetype.ValueType("str", []))]);
+    globalId: number | null;
     path: string;
 
-    constructor(globalId: number, path: string, ) {
+    constructor(globalId: number | null, path: string, ) {
         super();
         this.globalId = globalId;
         this.path = path;

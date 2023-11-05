@@ -5,6 +5,8 @@ export const t = {
     bool: 'bool',
     list: 'list',
     AggregateEntry: 'aggregate-entry',
+    PathComponent: 'path-component',
+    AggregateData: 'aggregate-data',
     ScanProgress: 'scan-progress',
     ScanState: 'scan-state',
     Navigation: 'navigation',

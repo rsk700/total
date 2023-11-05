@@ -1,6 +1,6 @@
 use murmur3::murmur3_32;
 
-use crate::ipc::ms::structs::AggregateEntry;
+use crate::ipc::ms::structs::{AggregateData, AggregateEntry, PathComponent};
 use std::{
     cmp::Reverse,
     fs,
@@ -125,6 +125,24 @@ fn scan_path(path: &Path) -> (PathScanResult, Vec<PathBuf>) {
 
 fn get_string_hash(s: &str) -> i64 {
     murmur3_32(&mut Cursor::new(s), 0).unwrap() as i64
+}
+
+fn get_components_from_path(path: &Path) -> (String, Vec<PathComponent>) {
+    let mut components = vec![];
+    let mut path = path.to_owned();
+    while let Some(name) = path.file_name() {
+        components.push(PathComponent::new(
+            path.to_string_lossy().into_owned(),
+            name.to_string_lossy().into_owned(),
+        ));
+        path = if let Some(p) = path.parent() {
+            p.to_owned()
+        } else {
+            break;
+        }
+    }
+    components.reverse();
+    (path.to_string_lossy().into_owned(), components)
 }
 
 pub struct Scanning {
@@ -260,7 +278,7 @@ impl Scanning {
         }
     }
 
-    pub fn get_aggregate_data(&mut self, up_to_fraction: f32) -> Vec<AggregateEntry> {
+    pub fn get_aggregate_data(&mut self, up_to_fraction: f32) -> AggregateData {
         struct IndexMapper(Vec<Option<usize>>);
         impl IndexMapper {
             fn new(size: usize) -> Self {
@@ -322,7 +340,7 @@ impl Scanning {
                 next_entry_index as i64,
                 next_entry.name.clone(),
                 get_string_hash(&next_entry.name),
-                next_entry.path.to_string_lossy().as_ref().to_owned(),
+                next_entry.path.to_string_lossy().into_owned(),
                 next_agg.self_size as i64,
                 next_agg.size as i64,
                 tail_size as i64,
@@ -364,7 +382,24 @@ impl Scanning {
             e.local_id = local_ids[i];
             e.local_parent = local_parents[i];
         }
-        entries
+        if let Some(PathScanResult { path, .. }) = self.entries.get(self.root_index) {
+            let (path_top, components) = get_components_from_path(path);
+            AggregateData::new(
+                path.to_string_lossy().into_owned(),
+                path_top,
+                components,
+                std::path::MAIN_SEPARATOR_STR.to_owned(),
+                entries,
+            )
+        } else {
+            AggregateData::new(
+                "?".to_owned(),
+                "".to_owned(),
+                vec![],
+                std::path::MAIN_SEPARATOR_STR.to_owned(),
+                entries,
+            )
+        }
     }
 
     pub fn rescan(&mut self) {
@@ -375,16 +410,24 @@ impl Scanning {
         self.root_index = handle;
     }
 
-    pub fn navigate(&mut self, handle: usize, path: &str) {
+    pub fn navigate(&mut self, handle: Option<usize>, path: &str) {
         let path: PathBuf = path.into();
-        if self
-            .entries
-            .get(handle)
-            .map(|e| e.path == path)
-            .unwrap_or_default()
-        {
+        if let Some(handle) = handle {
+            if self
+                .entries
+                .get(handle)
+                .map(|e| e.path == path)
+                .unwrap_or_default()
+            {
+                self.root_index = handle;
+                return;
+            }
+        }
+        // try to find entry by path
+        if let Some(handle) = self.entries.iter().position(|e| e.path == path) {
             self.root_index = handle;
         } else {
+            // fallback to fullscan if no handle or handle is incorrect
             *self = Self::new(&path);
         }
     }

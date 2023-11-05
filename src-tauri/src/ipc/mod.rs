@@ -177,6 +177,6 @@ pub async fn navigate(
     let Ok(mut s) = s.lock() else {
         return ipc_err("internal error");
     };
-    s.navigate(nav.global_id as usize, &nav.path);
+    s.navigate(nav.global_id.map(|id| id as usize), &nav.path);
     ipc_out(ms::structs::None {})
 }

@@ -1,6 +1,10 @@
 
 mod aggregate_entry;
 pub use self::aggregate_entry::AggregateEntry;
+mod path_component;
+pub use self::path_component::PathComponent;
+mod aggregate_data;
+pub use self::aggregate_data::AggregateData;
 mod scan_progress;
 pub use self::scan_progress::ScanProgress;
 mod navigation;

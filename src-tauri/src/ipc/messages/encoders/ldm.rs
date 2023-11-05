@@ -153,6 +153,29 @@ where
         }
     }
 }
+impl FromLdm<types::structs::PathComponent> for ldm::StructValue
+where
+{
+    fn to_value(&self) -> types::structs::PathComponent {
+        types::structs::PathComponent {
+            path: FromLdm::<String>::to_value(self.value.get("path").expect("unexpected value type")),
+            name: FromLdm::<String>::to_value(self.value.get("name").expect("unexpected value type")),
+        }
+    }
+}
+impl FromLdm<types::structs::AggregateData> for ldm::StructValue
+where
+{
+    fn to_value(&self) -> types::structs::AggregateData {
+        types::structs::AggregateData {
+            path: FromLdm::<String>::to_value(self.value.get("path").expect("unexpected value type")),
+            path_top: FromLdm::<String>::to_value(self.value.get("path-top").expect("unexpected value type")),
+            path_components: FromLdm::<Vec<types::structs::PathComponent>>::to_value(self.value.get("path-components").expect("unexpected value type")),
+            path_separator: FromLdm::<String>::to_value(self.value.get("path-separator").expect("unexpected value type")),
+            entries: FromLdm::<Vec<types::structs::AggregateEntry>>::to_value(self.value.get("entries").expect("unexpected value type")),
+        }
+    }
+}
 impl FromLdm<types::structs::ScanProgress> for ldm::StructValue
 where
 {
@@ -167,7 +190,7 @@ where
 {
     fn to_value(&self) -> types::structs::Navigation {
         types::structs::Navigation {
-            global_id: FromLdm::<i64>::to_value(self.value.get("global-id").expect("unexpected value type")),
+            global_id: FromLdm::<Option<i64>>::to_value(self.value.get("global-id").expect("unexpected value type")),
             path: FromLdm::<String>::to_value(self.value.get("path").expect("unexpected value type")),
         }
     }
@@ -203,6 +226,28 @@ impl FromLdm<types::structs::AggregateEntry> for ldm::Value
 where
 {
     fn to_value(&self) -> types::structs::AggregateEntry {
+        if let ldm::Value::Struct(s) = self {
+            s.to_value()
+        } else {
+            panic!("unexpected value type");
+        }
+    }
+}
+impl FromLdm<types::structs::PathComponent> for ldm::Value
+where
+{
+    fn to_value(&self) -> types::structs::PathComponent {
+        if let ldm::Value::Struct(s) = self {
+            s.to_value()
+        } else {
+            panic!("unexpected value type");
+        }
+    }
+}
+impl FromLdm<types::structs::AggregateData> for ldm::Value
+where
+{
+    fn to_value(&self) -> types::structs::AggregateData {
         if let ldm::Value::Struct(s) = self {
             s.to_value()
         } else {

@@ -30,6 +30,27 @@ const structMapFromLdm = new Map<string, (d: ldm.StructValue) => ValueBase>([
         }
     ],
     [
+        'path-component',
+        function(d: ldm.StructValue): ValueBase {
+            return new types.structs.PathComponent(
+                ldmToValue(d.value.get('path')!),
+                ldmToValue(d.value.get('name')!),
+            );
+        }
+    ],
+    [
+        'aggregate-data',
+        function(d: ldm.StructValue): ValueBase {
+            return new types.structs.AggregateData(
+                ldmToValue(d.value.get('path')!),
+                ldmToValue(d.value.get('path-top')!),
+                ldmToValue(d.value.get('path-components')!),
+                ldmToValue(d.value.get('path-separator')!),
+                ldmToValue(d.value.get('entries')!),
+            );
+        }
+    ],
+    [
         'scan-progress',
         function(d: ldm.StructValue): ValueBase {
             return new types.structs.ScanProgress(

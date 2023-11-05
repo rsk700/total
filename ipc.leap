@@ -21,6 +21,20 @@
     local-parent: option[int]
     nested: list[int]
 
+.struct path-component
+    /-- full path of component eg `/tmp/path1`
+    path: str
+    /-- name of component eg `path1`
+    name: str
+
+.struct aggregate-data
+    path: str
+    /-- start of path eg `/`
+    path-top: str
+    path-components: list[path-component]
+    path-separator: str
+    entries: list[aggregate-entry]
+
 .struct scan-progress
     done-count: int
 
@@ -29,7 +43,8 @@
     scan-progress
 
 .struct navigation
-    global-id: int
+    /-- optimization, if global id is known it will be faster to open path
+    global-id: option[int]
     path: str
 
 .struct about-app

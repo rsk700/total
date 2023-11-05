@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { AggregateEntry } from "../ipc/messages/types/structs";
+    import type { AggregateData } from "../ipc/messages/types/structs";
     import { getAggregateData } from "../ipc";
     import FlameView from "./FlameView.svelte";
     import Header from "./header/Header.svelte";
@@ -9,23 +9,37 @@
 
     // todo: quantize upToFraction into steps
     const upToWidthPx = 50;
-    let entries: AggregateEntry[] = [];
+    let aggregateData: AggregateData | null = null;
 
     // todo: allow only one request at a time + debounce
 
     // updateEntries is separate function in order to break feedback loop,
     // otherwise request is made in cycle infinitly
-    $: getAggregateData(upToWidthPx / windowWidth).then(updateEntries);
+    $: getAggregateData(upToWidthPx / windowWidth).then(updateAggData);
 
-    function updateEntries(e: AggregateEntry[]) {
-        entries = e;
-        if (entries.length > 0) {
-            navHistory.push(entries[0].globalId, entries[0].path);
+    function updateAggData(d: AggregateData) {
+        aggregateData = d;
+        if (aggregateData.entries.length > 0) {
+            navHistory.push(
+                aggregateData.entries[0].globalId,
+                aggregateData.entries[0].path
+            );
         }
     }
 </script>
 
-<Header root={entries[0] ?? null} />
-{#if entries.length !== 0}
-    <FlameView index={0} {entries} level={0} colorShift={0} />
+{#if aggregateData !== null}
+    <Header
+        pathTop={aggregateData.pathTop}
+        pathComponents={aggregateData.pathComponents}
+        pathSeparator={aggregateData.pathSeparator}
+    />
+    {#if aggregateData.entries.length !== 0}
+        <FlameView
+            index={0}
+            entries={aggregateData.entries}
+            level={0}
+            colorShift={0}
+        />
+    {/if}
 {/if}

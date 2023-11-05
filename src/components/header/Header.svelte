@@ -1,17 +1,21 @@
 <script lang="ts">
     import { dialog } from "@tauri-apps/api";
-    import type { AggregateEntry } from "../../ipc/messages/types/structs";
-    import { hrByteSize } from "../../text";
+    import type { PathComponent } from "../../ipc/messages/types/structs";
+    // import { hrByteSize } from "../../text";
     import HeaderAction from "./HeaderAction.svelte";
     import * as ipc from "../../ipc";
     import { AppState, appState } from "../../app_state";
     import { historyIsEmpty, pop as popHistory } from "../../nav_history";
     import About from "../About.svelte";
     import HeaderButton from "./HeaderButton.svelte";
+    import PathButton from "./PathButton.svelte";
 
-    export let root: AggregateEntry | null;
+    export let pathTop: string;
+    export let pathComponents: PathComponent[];
+    export let pathSeparator: string;
 
     let showAbout = false;
+    let isPathLeftHidden = false;
 
     async function choosePath() {
         let path = await dialog.open({
@@ -27,12 +31,6 @@
     async function navigateLevelUp() {
         await ipc.levelUp();
         appState.set(AppState.Scanning);
-    }
-
-    function openRoot() {
-        if (root !== null) {
-            ipc.openPath(root.path);
-        }
     }
 
     async function rescan() {
@@ -67,13 +65,16 @@
     <!-- <div class="flex justify-center items-center">
         <div class="mx-2 text-2xl">{hrByteSize(root?.size ?? 0)}</div>
     </div> -->
-    <div class="grow min-w-0 basis flex justify-center items-center h-full">
-        <button
-            on:click={openRoot}
-            class="h-full block mx-2 text-ellipsis whitespace-nowrap overflow-hidden text-[#10112d] hover:text-[#035600] transition-colors"
-        >
-            {root?.path ?? "?"}
-        </button>
+    <div
+        style:justify-content={isPathLeftHidden ? "end" : "center"}
+        class="grow min-w-0 basis flex items-center h-full overflow-hidden"
+    >
+        <PathButton
+            {pathTop}
+            components={pathComponents}
+            separator={pathSeparator}
+            bind:isLeftHidden={isPathLeftHidden}
+        />
     </div>
     <HeaderAction>
         <HeaderButton on:click={rescan}>
