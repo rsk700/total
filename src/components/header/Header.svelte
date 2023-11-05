@@ -67,12 +67,13 @@
     <!-- <div class="flex justify-center items-center">
         <div class="mx-2 text-2xl">{hrByteSize(root?.size ?? 0)}</div>
     </div> -->
-    <div class="grow min-w-0 basis flex justify-center items-center">
+    <div class="grow min-w-0 basis flex justify-center items-center h-full">
         <button
             on:click={openRoot}
-            class="block mx-2 text-ellipsis whitespace-nowrap overflow-hidden text-[#10112d] hover:text-[#035600] transition-colors"
-            >{root?.path ?? "?"}</button
+            class="h-full block mx-2 text-ellipsis whitespace-nowrap overflow-hidden text-[#10112d] hover:text-[#035600] transition-colors"
         >
+            {root?.path ?? "?"}
+        </button>
     </div>
     <HeaderAction>
         <HeaderButton on:click={rescan}>
