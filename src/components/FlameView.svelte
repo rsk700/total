@@ -132,6 +132,21 @@
       );
     }
   }
+
+  // using function because can't use generated color in hover:
+  function colorTail(node: HTMLElement) {
+    let bg = tailBg.toString();
+    let hover = tailBg.dc(2).dl(6).toString();
+    node.style.backgroundColor = bg;
+    node.addEventListener(
+      "mouseover",
+      () => (node.style.backgroundColor = hover)
+    );
+    node.addEventListener(
+      "mouseleave",
+      () => (node.style.backgroundColor = bg)
+    );
+  }
 </script>
 
 <!-- todo: try gradient for bg dark -> light (or reverse) -->
@@ -198,13 +213,14 @@
       on:click={(event) => clickEntry(event, entries[index])}
       on:contextmenu={(event) => contextMenu(event, entries[index])}
       on:keyup={(event) => keyUpEntry(event, entries[index])}
+      use:colorTail
       role="button"
       tabindex="0"
-      class="relative bg-[#c084fc] hover:bg-[#cda0ff] min-w-0 text-ellipsis whitespace-nowrap overflow-hidden"
+      class="relative min-w-0 overflow-hidden"
     >
       <div
         style:color={tailBg.dl(-10).dc(5).toString()}
-        class="absolute inset-0 flex justify-center items-center text-xl font-bold"
+        class="absolute inset-0 flex justify-center items-center text-xl font-bold whitespace-nowrap overflow-hidden"
       >
         {hrByteSize(entries[index].tailSize)}
       </div>
@@ -220,7 +236,7 @@
         </div>
       </div>
     </div>
-    <div class="min-w-0 text-ellipsis whitespace-nowrap overflow-hidden" />
+    <div class="min-w-0" />
   {/if}
 </div>
 
