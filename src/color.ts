@@ -1,37 +1,41 @@
 import { clamp } from "./numbers";
 
-export class Hsl {
+export class Oklch {
     constructor(
-        public h: number,
-        public s: number,
-        public l: number
+        // 0-100
+        public lightness: number,
+        // 0-100
+        public chroma: number,
+        // 0-360, but wraps
+        public hue: number,
     ) { }
 
     toString(): string {
-        return `hsl(${this.h} ${this.s}% ${this.l}%)`;
+        let c = 0.004 * this.chroma;
+        return `oklch(${this.lightness}% ${c} ${this.hue})`;
     }
 
-    sh(value: number): Hsl {
-        return new Hsl(value, this.s, this.l);
+    sl(value: number): Oklch {
+        return new Oklch(value, this.chroma, this.hue);
     }
 
-    ss(value: number): Hsl {
-        return new Hsl(this.h, value, this.l);
+    sc(value: number): Oklch {
+        return new Oklch(this.lightness, value, this.hue);
     }
 
-    sl(value: number): Hsl {
-        return new Hsl(this.h, this.s, value);
+    sh(value: number): Oklch {
+        return new Oklch(this.lightness, this.chroma, value);
     }
 
-    dh(amount: number): Hsl {
-        return new Hsl(this.h + amount, this.s, this.l);
+    dl(amount: number): Oklch {
+        return new Oklch(clamp(this.lightness + amount, 0, 100), this.chroma, this.hue);
     }
 
-    ds(amount: number): Hsl {
-        return new Hsl(this.h, clamp(this.s + amount, 0, 100), this.l);
+    dc(amount: number): Oklch {
+        return new Oklch(this.lightness, clamp(this.chroma + amount, 0, 100), this.hue);
     }
 
-    dl(amount: number): Hsl {
-        return new Hsl(this.h, this.s, clamp(this.l + amount, 0, 100));
+    dh(amount: number): Oklch {
+        return new Oklch(this.lightness, this.chroma, this.hue + amount);
     }
 }

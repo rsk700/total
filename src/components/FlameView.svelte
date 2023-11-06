@@ -4,10 +4,11 @@
   import { AppState, appState } from "../app_state";
   import { hrByteSize, hrCount } from "../text";
   import { lerp, lerpc } from "../numbers";
-  import { Hsl } from "../color";
+  import { Oklch } from "../color";
 
   const colorSteps = 4 * 2;
-  const fileBg = new Hsl(141, 63, 88);
+  const fileBg = new Oklch(93.27, 13.25, 157.11);
+  const tailBg = new Oklch(72.17, 44.25, 305.5);
 
   export let index: number;
   export let entries: AggregateEntry[];
@@ -69,7 +70,7 @@
     }
   }
 
-  function baseColor(i: number): Hsl {
+  function baseColor(i: number): Oklch {
     let ix = colorShift;
     if (level === 0) {
       ix += startIndex + i;
@@ -87,19 +88,27 @@
     } else if (ixShuffle === 3) {
       ix -= 2;
     }
-    let h = lerp(0, 264, (ix % colorSteps) / colorSteps);
-    let s = lerpc(86, 56, level / 4);
-    let l = lerpc(60, 75, level / 4);
-    return new Hsl(h, s, l);
+    let l = lerpc(75.3, 80.25, level / 4);
+    // todo: try start from more chroma?
+    let c = lerpc(33.5, 14.5, level / 4);
+    // todo: later remove shift?
+    let testShift = 33;
+    let h = lerp(
+      0 + testShift,
+      264 + testShift,
+      (ix % colorSteps) / colorSteps
+    );
+    return new Oklch(l, c, h);
   }
 
+  // using function because can't use generated color in hover:
   function colorBlock(
     node: HTMLElement,
     params: { e: AggregateEntry; i: number }
   ) {
     if (params.e.isFile) {
       let bg = fileBg.toString();
-      let hover = "#f0fdf4";
+      let hover = fileBg.dc(2).dl(6).toString();
       node.style.backgroundColor = bg;
       node.addEventListener(
         "mouseover",
@@ -111,7 +120,7 @@
       );
     } else {
       let bg = baseColor(params.i);
-      let bgHover = bg.ds(4).dl(10);
+      let bgHover = bg.dc(2).dl(6);
       node.style.backgroundColor = bg.toString();
       node.addEventListener(
         "mouseover",
@@ -145,16 +154,16 @@
     >
       <div
         style:color={e.isFile
-          ? fileBg.dl(-15).ds(-20).toString()
-          : bc.dl(-10).ds(-20).toString()}
+          ? fileBg.dl(-10).dc(5).toString()
+          : bc.dl(-9).dc(-1).toString()}
         class="absolute inset-0 flex justify-center items-center text-xl font-bold"
       >
         {hrByteSize(e.size)}
       </div>
       <div
         style:color={e.isFile
-          ? fileBg.dl(-50).ds(-20).toString()
-          : bc.dl(-40).ds(-20).toString()}
+          ? fileBg.dl(-35).dc(15).toString()
+          : bc.dl(-36).dc(-3).toString()}
         class="absolute inset-0 text-center p-1 text-sm text-ellipsis whitespace-nowrap overflow-hidden"
       >
         {e.name}
@@ -164,7 +173,7 @@
           class="absolute inset-x-0 bottom-0 flex justify-center p-1 text-xs"
         >
           <div
-            style:color={bc.dl(-25).ds(-10).toString()}
+            style:color={bc.dl(-17).dc(5).toString()}
             class="text-ellipsis whitespace-nowrap overflow-hidden"
           >
             <ion-icon name="document-outline" />
@@ -191,16 +200,18 @@
       on:keyup={(event) => keyUpEntry(event, entries[index])}
       role="button"
       tabindex="0"
-      class="relative bg-purple-400 hover:bg-purple-300 min-w-0 text-ellipsis whitespace-nowrap overflow-hidden"
+      class="relative bg-[#c084fc] hover:bg-[#cda0ff] min-w-0 text-ellipsis whitespace-nowrap overflow-hidden"
     >
       <div
-        class="absolute inset-0 flex justify-center items-center text-xl font-bold text-purple-500"
+        style:color={tailBg.dl(-10).dc(5).toString()}
+        class="absolute inset-0 flex justify-center items-center text-xl font-bold"
       >
         {hrByteSize(entries[index].tailSize)}
       </div>
       <div class="absolute inset-x-0 bottom-0 flex justify-center p-1 text-xs">
         <div
-          class="text-ellipsis whitespace-nowrap overflow-hidden text-purple-600"
+          style:color={tailBg.dl(-17).dc(5).toString()}
+          class="text-ellipsis whitespace-nowrap overflow-hidden"
         >
           <ion-icon name="document-outline" />
           {hrCount(entries[index].tailFileCount)}
