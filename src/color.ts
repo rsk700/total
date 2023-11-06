@@ -38,4 +38,40 @@ export class Oklch {
     dh(amount: number): Oklch {
         return new Oklch(this.lightness, this.chroma, this.hue + amount);
     }
+
+    apply(diff: OkDiff): Oklch {
+        return new Oklch(
+            clamp(this.lightness + diff.deltaLightness, 0, 100),
+            clamp(this.chroma + diff.deltaChroma, 0, 100),
+            this.hue + diff.deltaHue
+        )
+    }
+}
+
+export class OkDiff {
+    deltaLightness: number;
+    deltaChroma: number;
+    deltaHue: number;
+
+    constructor(
+        deltaLightness: number = 0,
+        deltaChroma: number = 0,
+        deltaHue: number = 0
+    ) {
+        this.deltaLightness = deltaLightness;
+        this.deltaChroma = deltaChroma;
+        this.deltaHue = deltaHue;
+    }
+
+    dl(amount: number): OkDiff {
+        return new OkDiff(this.deltaLightness + amount, this.deltaChroma, this.deltaHue);
+    }
+
+    dc(amount: number): OkDiff {
+        return new OkDiff(this.deltaLightness, this.deltaChroma + amount, this.deltaHue);
+    }
+
+    dh(amount: number): OkDiff {
+        return new OkDiff(this.deltaLightness, this.deltaChroma, this.deltaHue + amount);
+    }
 }

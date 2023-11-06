@@ -4,11 +4,12 @@
   import { AppState, appState } from "../app_state";
   import { hrByteSize, hrCount } from "../text";
   import { lerp, lerpc } from "../numbers";
-  import { Oklch } from "../color";
+  import { OkDiff, Oklch } from "../color";
 
   const colorSteps = 4 * 2;
   const fileBg = new Oklch(93.27, 13.25, 157.11);
-  const tailBg = new Oklch(72.17, 44.25, 305.5);
+  const tailBg = new Oklch(67.17, 44.25, 305.5);
+  const hoverColor = new OkDiff().dc(2).dl(7);
 
   export let index: number;
   export let entries: AggregateEntry[];
@@ -108,7 +109,7 @@
   ) {
     if (params.e.isFile) {
       let bg = fileBg.toString();
-      let hover = fileBg.dc(2).dl(6).toString();
+      let hover = fileBg.apply(hoverColor).toString();
       node.style.backgroundColor = bg;
       node.addEventListener(
         "mouseover",
@@ -119,16 +120,17 @@
         () => (node.style.backgroundColor = bg)
       );
     } else {
-      let bg = baseColor(params.i);
-      let bgHover = bg.dc(2).dl(6);
-      node.style.backgroundColor = bg.toString();
+      let base = baseColor(params.i);
+      let bg = base.toString();
+      let bgHover = base.apply(hoverColor).toString();
+      node.style.backgroundColor = bg;
       node.addEventListener(
         "mouseover",
-        () => (node.style.backgroundColor = bgHover.toString())
+        () => (node.style.backgroundColor = bgHover)
       );
       node.addEventListener(
         "mouseleave",
-        () => (node.style.backgroundColor = bg.toString())
+        () => (node.style.backgroundColor = bg)
       );
     }
   }
@@ -136,7 +138,7 @@
   // using function because can't use generated color in hover:
   function colorTail(node: HTMLElement) {
     let bg = tailBg.toString();
-    let hover = tailBg.dc(2).dl(6).toString();
+    let hover = tailBg.apply(hoverColor).toString();
     node.style.backgroundColor = bg;
     node.addEventListener(
       "mouseover",
