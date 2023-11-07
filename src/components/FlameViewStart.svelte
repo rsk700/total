@@ -4,18 +4,39 @@
     import FlameView from "./FlameView.svelte";
     import Header from "./header/Header.svelte";
     import * as navHistory from "../nav_history";
+    import { Subject, auditTime, filter } from "rxjs";
+    import { onDestroy } from "svelte";
 
     export let windowWidth: number;
 
-    // todo: quantize upToFraction into steps
     const upToWidthPx = 50;
+    // big negative value allows first request always to be performed
+    let prevSize = -1000;
     let aggregateData: AggregateData | null = null;
+    let resizeEvent = new Subject<null>();
+    let subOff = resizeEvent
+        .pipe(
+            // quantize by time
+            auditTime(100),
+            // quantize by distance (only update aggregated data if resized more
+            // than on `upToWidthPx` width)
+            filter(() => Math.abs(prevSize - windowWidth) >= upToWidthPx)
+        )
+        .subscribe(() => {
+            prevSize = windowWidth;
+            getAggregateData(upToWidthPx / windowWidth).then(updateAggData);
+        });
 
-    // todo: allow only one request at a time + debounce
+    onDestroy(() => {
+        subOff.unsubscribe();
+    });
 
-    // updateEntries is separate function in order to break feedback loop,
-    // otherwise request is made in cycle infinitly
-    $: getAggregateData(upToWidthPx / windowWidth).then(updateAggData);
+    $: {
+        let _ = [windowWidth];
+        // updateAggData is separate function in order to break feedback loop,
+        // otherwise request is made in cycle infinitly
+        resizeEvent.next(null);
+    }
 
     function updateAggData(d: AggregateData) {
         aggregateData = d;
