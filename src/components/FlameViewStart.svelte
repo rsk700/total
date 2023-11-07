@@ -20,10 +20,8 @@
     function updateAggData(d: AggregateData) {
         aggregateData = d;
         if (aggregateData.entries.length > 0) {
-            navHistory.push(
-                aggregateData.entries[0].globalId,
-                aggregateData.entries[0].path
-            );
+            let e = aggregateData.entries[0];
+            navHistory.push(e.globalId, e.name, e.path);
         }
     }
 </script>

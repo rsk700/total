@@ -5,10 +5,15 @@
     import HeaderAction from "./HeaderAction.svelte";
     import * as ipc from "../../ipc";
     import { AppState, appState } from "../../app_state";
-    import { historyIsEmpty, pop as popHistory } from "../../nav_history";
+    import {
+        historyIsEmpty,
+        navHistory,
+        pop as popHistory,
+    } from "../../nav_history";
     import About from "../About.svelte";
     import HeaderButton from "./HeaderButton.svelte";
     import PathButton from "./PathButton.svelte";
+    import { derived } from "svelte/store";
 
     export let pathTop: string;
     export let pathComponents: PathComponent[];
@@ -16,6 +21,14 @@
 
     let showAbout = false;
     let isPathLeftHidden = false;
+    const backTitle = derived(navHistory, ($h) => {
+        if ($h.length > 1) {
+            let prev = $h[$h.length - 2];
+            return `back to "${prev.name}"`;
+        } else {
+            return "";
+        }
+    });
 
     async function choosePath() {
         let path = await dialog.open({
@@ -53,12 +66,16 @@
     class="h-10 border-b border-[#929fcc] flex flex-row flex-nowrap items-center bg-[#b3bfee]"
 >
     <HeaderAction>
-        <HeaderButton on:click={navBack} disabled={$historyIsEmpty}>
+        <HeaderButton
+            on:click={navBack}
+            disabled={$historyIsEmpty}
+            title={$backTitle}
+        >
             <ion-icon name="play-back" class="block h-full" />
         </HeaderButton>
     </HeaderAction>
     <HeaderAction
-        ><HeaderButton on:click={navigateLevelUp}
+        ><HeaderButton on:click={navigateLevelUp} title="open parent folder"
             ><ion-icon name="arrow-up" class="block h-full" /></HeaderButton
         >
     </HeaderAction>
@@ -77,17 +94,20 @@
         />
     </div>
     <HeaderAction>
-        <HeaderButton on:click={rescan}>
+        <HeaderButton on:click={rescan} title="rescan folder">
             <ion-icon name="refresh" class="block h-full" />
         </HeaderButton>
     </HeaderAction>
     <HeaderAction>
-        <HeaderButton on:click={choosePath}>
+        <HeaderButton on:click={choosePath} title="open another folder">
             <ion-icon name="folder-open" class="block h-full" />
         </HeaderButton>
     </HeaderAction>
     <HeaderAction>
-        <HeaderButton on:click={() => (showAbout = true)}>
+        <HeaderButton
+            on:click={() => (showAbout = true)}
+            title="about"
+        >
             <ion-icon name="information" class="block h-full" />
         </HeaderButton>
     </HeaderAction>
