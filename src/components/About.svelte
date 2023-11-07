@@ -1,6 +1,8 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import * as ipc from "../ipc";
+    import LinkButton from "./LinkButton.svelte";
+    import ButtonDark from "./ButtonDark.svelte";
 
     export let show: boolean;
 
@@ -41,41 +43,25 @@
             <p class="text-lg">
                 <span class="font-bold">Total</span> - disk usage visualization
                 tool by
-                <button
-                    on:click={() => openUrl("http://rsk.me/")}
-                    class="text-blue-700 hover:text-blue-500 active:text-blue-300"
-                    >rsk</button
-                >
+                <LinkButton on:click={() => openUrl("http://rsk.me/")}
+                    >rsk
+                </LinkButton>
             </p>
             <p>v{version}</p>
             <p>
-                <button
-                    on:click={() => openUrl("https://github.com")}
-                    class="text-blue-700 hover:text-blue-500 active:text-blue-300"
-                    >https://todo-url</button
+                <LinkButton on:click={() => openUrl("https://github.com")}
+                    >https://todo-url</LinkButton
                 >
             </p>
             <p class="mt-8 text-lg italic">
-                Also I'm making note taking, todo list app <button
+                Also I'm making note taking, todo list app <LinkButton
                     on:click={() => openUrl("https://heaplist.app/")}
-                    class="text-blue-700 hover:text-blue-500 active:text-blue-300"
-                    >heaplist.app</button
+                    >heaplist.app</LinkButton
                 >
             </p>
         </div>
         <div class="mt-8 text-center">
-            <button
-                on:click={hide}
-                class="border-2
-            rounded
-            px-2
-            text-lg
-            border-green-400
-            hover:bg-green-400
-            active:bg-green-300
-            active:border-green-300
-            active:text-green-900">close</button
-            >
+            <ButtonDark on:click={hide}>close</ButtonDark>
         </div>
     </div>
 </div>
