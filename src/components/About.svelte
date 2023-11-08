@@ -49,8 +49,8 @@
             </p>
             <p>v{version}</p>
             <p>
-                <LinkButton on:click={() => openUrl("https://github.com")}
-                    >https://todo-url</LinkButton
+                <LinkButton on:click={() => openUrl("https://github.com/rsk700/total")}
+                    >github.com/rsk700/total</LinkButton
                 >
             </p>
             <p class="mt-8 text-lg italic">
