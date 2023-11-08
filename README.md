@@ -17,4 +17,8 @@ $ npm install
 $ cargo tauri build
 ```
 
-Compiled binary files will be located inside `src-tauri/target/release/` and `src-tauri/target/release/bundle/`
+Compiled binary files will be located inside `src-tauri/target/release/` and `src-tauri/target/release/bundle/`.
+
+# More links
+
+Also I'm making note taking, todo list app (Heaplist)[https://heaplist.app/].
