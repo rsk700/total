@@ -7,7 +7,7 @@
   },
   "package": {
     "productName": "total",
-    "version": "0.1.0"
+    "version": "0.1.1"
   },
   "tauri": {
     "allowlist": {
@@ -17,8 +17,8 @@
     },
     "bundle": {
       "active": true,
-      "category": "DeveloperTool",
-      "copyright": "",
+      "category": "Utility",
+      "copyright": "GPL3",
       "deb": {
         "depends": []
       },
@@ -40,7 +40,7 @@
         "signingIdentity": null
       },
       "resources": [],
-      "shortDescription": "",
+      "shortDescription": "Total is a tool for disk space usage visualisation",
       "targets": "all",
       "windows": {
         "certificateThumbprint": null,
