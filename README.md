@@ -21,4 +21,4 @@ Compiled binary files will be located inside `src-tauri/target/release/` and `sr
 
 # More links
 
-Also I'm making note taking, todo list app (Heaplist)[https://heaplist.app/].
+Also I'm making note taking, todo list app [Heaplist](https://heaplist.app/).
