@@ -2,7 +2,8 @@ mod version;
 
 use pass_tool::{
     actions::{
-        action, command, copy_file_named, create_dir, delete_file, many, replace_in_file_once,
+        action, command, copy_file_named, create_dir, delete_file, many, rename_path,
+        replace_in_file_once,
     },
     checks::{check, file_contains_once, is_dir, not_op, stdout_contains_once},
     instruction,
@@ -28,6 +29,7 @@ fn get_playbook(input: &[u8]) -> Result<Playbook, String> {
     let releases_path = rep_path.join("_releases");
     let new_release_dir = releases_path.join(new_version.to_string());
     let linux_bin_name = "total.AppImage";
+    let windows_bin_name = "total.exe";
     Ok(Playbook::new(
         "Release new Total app",
         ABOUT,
@@ -179,7 +181,27 @@ fn get_playbook(input: &[u8]) -> Result<Playbook, String> {
                     delete_file(&new_release_dir.join(linux_bin_name)),
                 ]),
             )),
-            // todo: wait for windows binary?
+            instruction(action(
+                format!(
+                    "Waiting for windows binary: compile it, copy into `_releases/{new_version}`, and rename into `w`"
+                ),
+                wait_for_file(new_release_dir.join("w")),
+            )),
+            instruction(action(
+                "Create windows release zip",
+                many([
+                    rename_path(
+                        new_release_dir.join("w"),
+                        new_release_dir.join(windows_bin_name),
+                    ),
+                    command([
+                        "zip",
+                        &format!("total_{}_windows.zip", new_version),
+                        windows_bin_name,
+                    ]),
+                    delete_file(&new_release_dir.join(windows_bin_name)),
+                ]),
+            )),
         ],
     ))
 }
@@ -234,4 +256,31 @@ where
     Dir: Into<PathBuf>,
 {
     SetDir(dir.into()).into_action()
+}
+
+struct WaitForFile(PathBuf);
+
+impl Action for WaitForFile {
+    fn name(&self) -> &str {
+        "WaitForFile"
+    }
+
+    fn run(&self) -> ActionResult {
+        while !self.0.is_file() {
+            std::thread::sleep(std::time::Duration::from_secs(1));
+        }
+        std::thread::sleep(std::time::Duration::from_secs(1));
+        ActionResult::Ok
+    }
+
+    fn into_action(self) -> Box<dyn Action> {
+        Box::new(self)
+    }
+}
+
+fn wait_for_file<P>(path: P) -> Box<dyn Action>
+where
+    P: Into<PathBuf>,
+{
+    WaitForFile(path.into()).into_action()
 }
