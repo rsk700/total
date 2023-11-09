@@ -100,6 +100,8 @@ fn get_playbook(input: &[u8]) -> Result<Playbook, String> {
         ],
         [
             instruction(set_dir(&rep_path)),
+            instruction(action("Install node modules", command(["npm", "install"])))
+                .confirm(is_dir(rep_path.join("node_modules"))),
             instruction(action(
                 "Update version in Cargo.toml",
                 replace_in_file_once(
