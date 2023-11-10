@@ -72,7 +72,7 @@
         on:contextmenu={(e) => contextMenu(e, i)}
         class:selected-color={selectedSection >= i}
         class:pb-1={selectedSection >= i}
-        class="block h-full text-[#10112d] transition-all ease-out duration-100"
+        class="block h-full text-[#10112d] whitespace-nowrap transition-all ease-out duration-100"
         >{#if first}{pathTop}{/if}{c.name}{#if !last}{separator}{/if}</button
     >
 {/each}
