@@ -19,7 +19,7 @@ $ cargo tauri build
 
 Compiled binary files will be located inside `src-tauri/target/release/` and `src-tauri/target/release/bundle/`.
 
-**ⓘ** code in `src/ipc/` and in `src-tauri/src/ipc/` is generated from `ipc.leap`, which describes types using [leap-lang](https://github.com/rsk700/leap-lang), code generator is not open source yet, but I'm planning to open it later when have time.
+**note:** code in `src/ipc/` and in `src-tauri/src/ipc/` is generated from `ipc.leap`, which describes types using [leap-lang](https://github.com/rsk700/leap-lang), code generator is not open source yet, but I'm planning to open it later when have time.
 
 # More links
 
