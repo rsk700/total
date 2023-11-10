@@ -4,6 +4,10 @@ use std::{fmt::Display, str::FromStr};
 pub struct Version(u32, u32, u32);
 
 impl Version {
+    pub fn new(major: u32, minor: u32, patch: u32) -> Self {
+        Self(major, minor, patch)
+    }
+
     pub fn major(&self) -> u32 {
         self.0
     }

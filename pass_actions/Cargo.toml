@@ -11,3 +11,7 @@ pass_tool = "0.3.1"
 [[bin]]
 name = "release_new_version"
 path = "src/release_new_version.rs"
+
+[[bin]]
+name = "new_dev_version"
+path = "src/new_dev_version.rs"
