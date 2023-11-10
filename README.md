@@ -1,4 +1,4 @@
-**Total** is a tool for disk space usage visualisation.
+**Total** is a tool for disk space usage visualization.
 
 ![App screenshot](/screenshot.png "App screenshot")
 

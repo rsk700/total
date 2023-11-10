@@ -40,7 +40,7 @@
         "signingIdentity": null
       },
       "resources": [],
-      "shortDescription": "Total is a tool for disk space usage visualisation",
+      "shortDescription": "Total is a tool for disk space usage visualization",
       "targets": "all",
       "windows": {
         "certificateThumbprint": null,
