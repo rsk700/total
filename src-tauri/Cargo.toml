@@ -1,6 +1,6 @@
 [package]
 name = "app"
-version = "0.1.1"
+version = "1.0.0"
 description = "Total is a tool for disk space usage visualization"
 authors = ["Roman Kudryavtsev <rskbox@gmail.com>"]
 license = "GPL3"
