@@ -6,7 +6,7 @@
 
 # Download
 
-todo: link to releases
+[Releases](https://github.com/rsk700/total/releases).
 
 # Build
 
