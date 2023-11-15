@@ -2,7 +2,7 @@
 
 ![App screenshot](/screenshot.png "App screenshot")
 
-**Total** uses flame graphs to show space usage. Left clicks allow navigating inside selected folder, while right clicks will open folder in default file manager.
+**Total** uses flame graphs to show space usage. Left clicks allow navigating inside selected folder, while right clicks will open folder in default file manager. You can watch demo video in this [tweeter post](https://twitter.com/rsk/status/1723390454056583314).
 
 # Download
 
